@@ -34,6 +34,7 @@ public class WordTable {
         } catch(IOException e) {
             e.printStackTrace();
         }
+        System.out.println("done parsing");
     }
     public List<Word> get(String key) {
         if(words.containsKey(key)) {
@@ -42,18 +43,33 @@ public class WordTable {
             throw new RuntimeException("key not found:  "+ key);
         }
     }
-    public static void main(String[] args) {
+    public static void fixedTest() {
         final WordTable t = new WordTable("./phone.cin");
-        
+
         System.out.println(t.get("ji3").get(0));  
         System.out.println(t.get("g4").get(0)); 
         System.out.println(t.get("5.").get(0));   
         System.out.println(t.get("ej04").get(0)); 
         System.out.println(t.get("u/3").get(0));  
     }
+    public static void dynamicTest(String[] keys) {
+        final WordTable t = new WordTable("./phone.cin");
+        for(int i=0; i<keys.length; i++) {
+            System.out.println(join(t.get(keys[i]), ", "));
+            //System.out.print(t.get(keys[i]).get(0));
+        }
+        System.out.println();
+    }
+    public static void main(String[] args) {
+        //fixedTest();
+        dynamicTest(args);
+    }
 
 
-    public static String join(Object[] objs, String del) {
+    public static String join(List<?> objs, String del) {
+        return join(objs.toArray(), del);
+    }
+    public static <T> String join(T[] objs, String del) {
         StringBuilder sb = new StringBuilder();
         if(objs.length > 1) {
             sb.append(objs[0].toString());
