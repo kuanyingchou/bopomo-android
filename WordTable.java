@@ -1,0 +1,104 @@
+import java.io.*;
+import java.util.*;
+
+public class WordTable {
+    private final Hashtable<String, List<Word>> words =
+            new Hashtable<String, List<Word>>();
+
+    public WordTable(String path) {
+        final String data = readTextFile(path);
+        final BufferedReader reader = new BufferedReader(
+                new StringReader(data));
+        try { 
+            String line = reader.readLine();
+            boolean startCharParsing = false;
+            while(line != null) {
+                if(line.startsWith("%chardef")) {
+                    startCharParsing = true;
+                } else {
+                    if(startCharParsing) {
+                        final String trimmedLine = line.trim();
+                        final String[] kv = trimmedLine.split(" ");
+                        if(words.containsKey(kv[0])) {
+                            words.get(kv[0]).add(new Word(kv[1]));
+                        } else {
+                            final List<Word> a = new ArrayList<Word>();
+                            a.add(new Word(kv[1]));
+                            words.put(kv[0], a);
+                        }
+                        //System.out.println("add "+kv[1] + " to " +kv[0]);
+                    }
+                }
+                line = reader.readLine();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public List<Word> get(String key) {
+        if(words.containsKey(key)) {
+            return words.get(key);
+        } else {
+            throw new RuntimeException("key not found:  "+ key);
+        }
+    }
+    public static void main(String[] args) {
+        final WordTable t = new WordTable("./phone.cin");
+        
+        System.out.println(t.get("ji3").get(0));  
+        System.out.println(t.get("g4").get(0)); 
+        System.out.println(t.get("5.").get(0));   
+        System.out.println(t.get("ej04").get(0)); 
+        System.out.println(t.get("u/3").get(0));  
+    }
+
+
+    public static String join(Object[] objs, String del) {
+        StringBuilder sb = new StringBuilder();
+        if(objs.length > 1) {
+            sb.append(objs[0].toString());
+        }
+        for(int i=1; i<objs.length; i++) {
+            sb.append(del);
+            sb.append(objs[i]);
+        }
+        return sb.toString();
+    }
+
+    public static String readTextFile(String path) {
+        String everything="";
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append('\n');
+                line = br.readLine();
+            }
+            everything = sb.toString();
+            br.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return everything;
+    }
+}
+
+class Word {
+    char value;
+    int frequency;
+
+    Word(char c) {
+        value = c;
+    }
+    Word(String s) {
+        value = s.charAt(0);
+    }
+    public String toString() {
+        return value+"("+frequency+")";
+    }
+}
