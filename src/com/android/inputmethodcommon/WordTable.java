@@ -1,3 +1,5 @@
+package com.android.inputmethodcommon;
+
 import java.io.*;
 import java.util.*;
 
