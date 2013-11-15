@@ -40,7 +40,8 @@ public class WordTable {
         if(words.containsKey(key)) {
             return words.get(key);
         } else {
-            throw new RuntimeException("key not found:  "+ key);
+            return new ArrayList<Word>();
+            //throw new RuntimeException("key not found:  "+ key);
         }
     }
     public static void fixedTest() {
@@ -113,7 +114,7 @@ public class WordTable {
 }
 
 class Word {
-    char value;
+    private final char value;
 
     Word(char c) {
         value = c;
