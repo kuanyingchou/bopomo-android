@@ -2,8 +2,8 @@ import java.io.*;
 import java.util.*;
 
 public class WordTable {
-    private final Hashtable<String, List<Word>> words =
-            new Hashtable<String, List<Word>>();
+    private final Map<String, List<Word>> words =
+            new HashMap<String, List<Word>>();
 
     public WordTable(String path) {
         parse(path);
@@ -38,7 +38,7 @@ public class WordTable {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        System.out.println("finished parsing");
+        System.out.println("done");
     }
     public List<Word> get(String key) {
         if(words.containsKey(key)) {
