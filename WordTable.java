@@ -55,8 +55,9 @@ public class WordTable {
     public static void dynamicTest(String[] keys) {
         final WordTable t = new WordTable("./phone.cin");
         for(int i=0; i<keys.length; i++) {
-            System.out.println(join(t.get(keys[i]), ", "));
+            //System.out.println(join(t.get(keys[i]), ", "));
             //System.out.print(t.get(keys[i]).get(0));
+            System.out.println(join(subList(t.get(keys[i]), 10), ", "));
         }
         System.out.println();
     }
@@ -65,6 +66,13 @@ public class WordTable {
         dynamicTest(args);
     }
 
+    public static <T> List<T> subList(List<T> target, int size) {
+        if(target.size() <= size) {
+            return new ArrayList<T>(target);
+        } else {
+            return target.subList(0, size);
+        }
+    }
 
     public static String join(List<?> objs, String del) {
         return join(objs.toArray(), del);
