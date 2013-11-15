@@ -114,7 +114,6 @@ public class WordTable {
 
 class Word {
     char value;
-    int frequency;
 
     Word(char c) {
         value = c;
@@ -123,6 +122,6 @@ class Word {
         value = s.charAt(0);
     }
     public String toString() {
-        return value+"("+frequency+")";
+        return String.valueOf(value);
     }
 }
