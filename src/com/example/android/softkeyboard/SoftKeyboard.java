@@ -71,6 +71,7 @@ public class SoftKeyboard extends InputMethodService
     private LatinKeyboard mSymbolsKeyboard;
     private LatinKeyboard mSymbolsShiftedKeyboard;
     private LatinKeyboard mQwertyKeyboard;
+    private LatinKeyboard mBopomoKeyboard;
     
     private LatinKeyboard mCurKeyboard;
     
@@ -102,6 +103,7 @@ public class SoftKeyboard extends InputMethodService
         mQwertyKeyboard = new LatinKeyboard(this, R.xml.qwerty);
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
+        mBopomoKeyboard = new LatinKeyboard(this, R.xml.bopomo);
     }
     
     /**
@@ -114,7 +116,7 @@ public class SoftKeyboard extends InputMethodService
         mInputView = (LatinKeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
-        mInputView.setKeyboard(mQwertyKeyboard);
+        mInputView.setKeyboard(mBopomoKeyboard);
         return mInputView;
     }
 
@@ -172,7 +174,7 @@ public class SoftKeyboard extends InputMethodService
                 // normal alphabetic keyboard, and assume that we should
                 // be doing predictive text (showing candidates as the
                 // user types).
-                mCurKeyboard = mQwertyKeyboard;
+                mCurKeyboard = mBopomoKeyboard; //mQwertyKeyboard;
                 mPredictionOn = true;
                 
                 // We now look for a few special variations of text that will
