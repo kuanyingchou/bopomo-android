@@ -16,11 +16,13 @@
 
 package com.example.android.softkeyboard;
 
+import android.content.res.AssetManager;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,9 +31,14 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.android.inputmethodcommon.Word;
+import com.android.inputmethodcommon.WordTable;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -77,6 +84,8 @@ public class SoftKeyboard extends InputMethodService
     
     private String mWordSeparators;
     
+    private WordTable wordTable;
+    
     /**
      * Main initialization of the input method component.  Be sure to call
      * to super class.
@@ -85,6 +94,12 @@ public class SoftKeyboard extends InputMethodService
         super.onCreate();
         mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
+        final AssetManager am = getAssets();
+        try {
+            wordTable = new WordTable(am.open("phone.cin"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -114,7 +129,7 @@ public class SoftKeyboard extends InputMethodService
      */
     @Override public View onCreateInputView() {
         mInputView = (LatinKeyboardView) getLayoutInflater().inflate(
-                R.layout.input, null);
+                R.layout.input, null); //>>>
         mInputView.setOnKeyboardActionListener(this);
         mInputView.setKeyboard(mBopomoKeyboard);
         return mInputView;
@@ -433,7 +448,9 @@ public class SoftKeyboard extends InputMethodService
      */
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
-            inputConnection.commitText(mComposing, mComposing.length());
+            final List<Word> candidates = wordTable.get(mComposing.toString());
+            if(candidates.size() <= 0) return;
+            inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
             mComposing.setLength(0);
             updateCandidates();
         }
@@ -548,15 +565,19 @@ public class SoftKeyboard extends InputMethodService
      * candidates.
      */
     private void updateCandidates() {
-        if (!mCompletionOn) {
+        //if (!mCompletionOn) {
             if (mComposing.length() > 0) {
-                ArrayList<String> list = new ArrayList<String>();
-                list.add(mComposing.toString());
+                final List<Word> words = wordTable.get(mComposing.toString());
+                final List<String> list = new ArrayList<String>();
+                for(Word w : words) {
+                    list.add(w.toString());
+                }
+System.out.println("candidates for "+mComposing+": "+WordTable.join(list, ", "));                
                 setSuggestions(list, true, true);
             } else {
                 setSuggestions(null, false, false);
             }
-        }
+        //}
     }
     
     public void setSuggestions(List<String> suggestions, boolean completions,
@@ -609,20 +630,34 @@ public class SoftKeyboard extends InputMethodService
     }
     
     private void handleCharacter(int primaryCode, int[] keyCodes) {
+//System.out.println("handleCharacter()");        
         if (isInputViewShown()) {
             if (mInputView.isShifted()) {
                 primaryCode = Character.toUpperCase(primaryCode);
             }
         }
+        
+        /*
         if (isAlphabet(primaryCode) && mPredictionOn) {
-            mComposing.append((char) primaryCode);
+System.out.println("is alphabet!");            
+            mComposing.append((char)primaryCode);
             getCurrentInputConnection().setComposingText(mComposing, 1);
             updateShiftKeyState(getCurrentInputEditorInfo());
             updateCandidates();
         } else {
-            getCurrentInputConnection().commitText(
-                    String.valueOf((char) primaryCode), 1);
+        */
+        
+        final InputConnection ic = getCurrentInputConnection();
+        
+        if(primaryCode == 33) { //space
+            ic.commitText(String.valueOf((char) primaryCode), 1);
+        } else {        
+            final String bopomoKey = wordTable.getKeyName(String.valueOf((char)primaryCode));
+System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
+            mComposing.append(bopomoKey);
+            ic.setComposingText(mComposing, 1);
         }
+        updateCandidates();
     }
 
     private void handleClose() {
@@ -646,7 +681,7 @@ public class SoftKeyboard extends InputMethodService
     }
     
     public boolean isWordSeparator(int code) {
-        String separators = getWordSeparators();
+        String separators = " "; //getWordSeparators();
         return separators.contains(String.valueOf((char)code));
     }
 
@@ -672,17 +707,17 @@ public class SoftKeyboard extends InputMethodService
     }
     
     public void swipeRight() {
-        if (mCompletionOn) {
-            pickDefaultCandidate();
-        }
+        //if (mCompletionOn) {
+        //    pickDefaultCandidate();
+        //}
     }
     
     public void swipeLeft() {
-        handleBackspace();
+        //handleBackspace();
     }
 
     public void swipeDown() {
-        handleClose();
+        //handleClose();
     }
 
     public void swipeUp() {

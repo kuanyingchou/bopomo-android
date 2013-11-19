@@ -42,7 +42,7 @@ public class CandidateView extends View {
     
     private Rect mBgPadding;
 
-    private static final int MAX_SUGGESTIONS = 32;
+    private static final int MAX_SUGGESTIONS = 256; //>>>
     private static final int SCROLL_PIXELS = 20;
     
     private int[] mWordWidth = new int[MAX_SUGGESTIONS];
