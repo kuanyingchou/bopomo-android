@@ -37,8 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.android.inputmethodcommon.Word;
-import com.android.inputmethodcommon.WordTable;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -64,7 +62,7 @@ public class SoftKeyboard extends InputMethodService
     private InputMethodManager mInputMethodManager;
 
     private LatinKeyboardView mInputView;
-    private CandidateView mCandidateView;
+    private MyCandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
     
     private StringBuilder mComposing = new StringBuilder();
@@ -140,7 +138,7 @@ public class SoftKeyboard extends InputMethodService
      * be generated, like {@link #onCreateInputView}.
      */
     @Override public View onCreateCandidatesView() {
-        mCandidateView = new CandidateView(this);
+        mCandidateView = new MyCandidateView(this);
         mCandidateView.setService(this);
         return mCandidateView;
     }
@@ -588,7 +586,8 @@ System.out.println("candidates for "+mComposing+": "+WordTable.join(list, ", "))
             setCandidatesViewShown(true);
         }
         if (mCandidateView != null) {
-            mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
+            //mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
+            mCandidateView.setCandidates(suggestions);
         }
     }
     

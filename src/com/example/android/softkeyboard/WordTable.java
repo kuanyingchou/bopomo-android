@@ -1,7 +1,8 @@
-package com.android.inputmethodcommon;
+package com.example.android.softkeyboard;
 
 import java.io.*;
 import java.util.*;
+
 
 public class WordTable {
     private final Map<String, List<Word>> words =

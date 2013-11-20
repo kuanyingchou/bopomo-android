@@ -19,12 +19,18 @@
 -->
 
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:keyWidth="10%p"
+    android:keyWidth="9%p"
     android:horizontalGap="2px"
     android:verticalGap="0px"
     android:keyHeight="@dimen/key_height"
     >
-
+	<Row>
+	    <Key android:codes="-3" android:keyIcon="@drawable/sym_keyboard_done" 
+                android:keyWidth="20%p" android:keyEdgeFlags="left"/>
+    	<Key android:codes="-5" android:keyIcon="@drawable/sym_keyboard_delete" 
+                android:isRepeatable="true" android:keyEdgeFlags="right"/>
+    </Row>
+    
     <Row>
         <Key android:codes="49" android:keyLabel="ㄅ" android:keyEdgeFlags="left"/>
         <Key android:codes="50" android:keyLabel="ㄉ"/>
@@ -40,7 +46,8 @@
     </Row>
    
     <Row>
-        <Key android:codes="113" android:keyLabel="ㄆ" android:keyEdgeFlags="left"/>
+        <Key android:codes="113" android:keyLabel="ㄆ"  
+            android:horizontalGap="2%p" android:keyEdgeFlags="left"/>
         <Key android:codes="119" android:keyLabel="ㄊ"/>
         <Key android:codes="101" android:keyLabel="ㄍ"/>
         <Key android:codes="114" android:keyLabel="ㄐ"/>
@@ -54,7 +61,7 @@
     
     <Row>
         <Key android:codes="97" android:keyLabel="ㄇ"
-            android:keyEdgeFlags="left"/>
+            android:horizontalGap="4%p" android:keyEdgeFlags="left"/>
         <Key android:codes="115" android:keyLabel="ㄋ"/>
         <Key android:codes="100" android:keyLabel="ㄎ"/>
         <Key android:codes="102" android:keyLabel="ㄑ"/>
@@ -67,7 +74,8 @@
     </Row>
        
     <Row>
-        <Key android:codes="122" android:keyLabel="ㄈ" android:keyEdgeFlags="left"/>
+        <Key android:codes="122" android:keyLabel="ㄈ" 
+            android:horizontalGap="6%p" android:keyEdgeFlags="left"/>
         <Key android:codes="120" android:keyLabel="ㄌ"/>
         <Key android:codes="99" android:keyLabel="ㄏ"/>
         <Key android:codes="118" android:keyLabel="ㄒ"/>
@@ -76,23 +84,18 @@
         <Key android:codes="109" android:keyLabel="ㄩ"/>
         <Key android:codes="44" android:keyLabel="ㄝ"/>
         <Key android:codes="46" android:keyLabel="ㄡ"/>
-        <Key android:codes="47" android:keyLabel="ㄥ" android:keyEdgeFlags="right"/>    
-        <Key android:codes="-5" android:keyIcon="@drawable/sym_keyboard_delete" 
-                android:keyEdgeFlags="right"
-                android:isRepeatable="true"/>
+        <Key android:codes="47" android:keyLabel="ㄥ"
+            android:keyEdgeFlags="right"/>
+        
     </Row>
     
-    <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="-3" android:keyIcon="@drawable/sym_keyboard_done" 
-                android:keyWidth="20%p" android:keyEdgeFlags="left"/>
+    <Row android:rowEdgeFlags="bottom" android:keyHeight="60dip">
         <Key android:codes="-2" android:keyLabel="123" 
-                android:keyWidth="15%p"/>
-        <Key android:codes="32" android:keyLabel="空格" 
-                android:keyWidth="30%p" android:isRepeatable="true"/>
-        <Key android:codes="46,44" android:keyLabel=". ,"
-                android:keyWidth="15%p"/>
+                android:keyWidth="30%p"/>
+        <Key android:codes="32" android:keyLabel="空格"
+                android:keyWidth="40%p" android:isRepeatable="true"/>
         <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return" 
-                android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+                android:keyWidth="30%p" android:keyEdgeFlags="right"/>
     </Row>
 </Keyboard>
     

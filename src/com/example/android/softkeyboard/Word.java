@@ -1,4 +1,4 @@
-package com.android.inputmethodcommon;
+package com.example.android.softkeyboard;
 
 public class Word {
     private final char value;
