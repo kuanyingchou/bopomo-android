@@ -6,7 +6,7 @@
         android:largeScreens="true"
         android:xlargeScreens="true" />
     <application android:label="@string/ime_name">
-        <service android:name="SoftKeyboard"
+        <service android:name="MyKeyboard"
                 android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
