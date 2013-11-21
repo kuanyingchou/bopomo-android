@@ -32,9 +32,9 @@ public class MyCandidateView extends LinearLayout {
         super(context);
         
         setBackgroundColor(Color.GRAY);
-        
+
         elementView = new TextView(context);
-        
+
         listView = new LinearLayout(context);
         
         final HorizontalScrollView scroller = new HorizontalScrollView(context);
