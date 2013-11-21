@@ -93,7 +93,7 @@ public class WordTable {
         if(keys.containsKey(key)) {
             return keys.get(key);
         } else {
-            throw new IllegalArgumentException();
+            return ""; //>>>
         }
     }
     public String getKeyCode(String keyName) {
