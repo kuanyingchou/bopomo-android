@@ -19,15 +19,15 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Title for Latin keyboard  -->
-    <string name="ime_name">Sample Soft Keyboard</string>
+    <string name="ime_name">Bopomo Keyboard</string>
 
     <!-- Symbols that are commonly considered word separators in this language -->
     <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
     
     <!-- Labels on soft keys -->
-    <string name="label_go_key">Go</string>
-    <string name="label_next_key">Next</string>
-    <string name="label_send_key">Send</string>
+    <string name="label_go_key">好</string>
+    <string name="label_next_key">下一個</string>
+    <string name="label_send_key">送出</string>
 
     <!-- Labels for subtype -->
     <string name="label_subtype_generic">%s</string>
