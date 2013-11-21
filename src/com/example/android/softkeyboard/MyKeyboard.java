@@ -40,7 +40,6 @@ import java.util.List;
 
 public class MyKeyboard extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
-    static final boolean DEBUG = false;
     
     /**
      * This boolean indicates the optional example code for performing
@@ -514,6 +513,7 @@ public class MyKeyboard extends InputMethodService
     //[ implements KeyboardView.OnKeyboardActionListener
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+System.out.println("onKey: "+primaryCode);
         if (isWordSeparator(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
@@ -549,6 +549,7 @@ public class MyKeyboard extends InputMethodService
 
     @Override
     public void onText(CharSequence text) {
+System.out.println("onText: "+text);
         InputConnection ic = getCurrentInputConnection();
         if (ic == null) return;
         ic.beginBatchEdit();
