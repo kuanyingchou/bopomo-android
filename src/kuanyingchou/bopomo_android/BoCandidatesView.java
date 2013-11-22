@@ -23,11 +23,11 @@ import android.widget.LinearLayout.LayoutParams;
 
 public class BoCandidatesView extends LinearLayout {
     
-    private InputMethodService inputMethodService;
+    private BoInput inputService;
     private List<String> list = new ArrayList<String>();
     private LinearLayout listView;
     final private HorizontalScrollView scroller;
-    final private int elmtSize = 20;
+    final private int elmtSize = 24;
     
     public BoCandidatesView(final Context context) {
         super(context);
@@ -37,9 +37,12 @@ public class BoCandidatesView extends LinearLayout {
         listView = new LinearLayout(context);
         
         scroller = new HorizontalScrollView(context);
-        final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, 
+
+        final LayoutParams lp = new LayoutParams(
+                LayoutParams.WRAP_CONTENT, 
                 LayoutParams.WRAP_CONTENT);
         lp.weight = 1;
+
         scroller.setLayoutParams(lp);
 
         scroller.addView(listView);
@@ -53,8 +56,8 @@ public class BoCandidatesView extends LinearLayout {
       
     }
     
-    public void setService(InputMethodService service) {
-        inputMethodService = service;
+    public void setService(BoInput service) {
+        inputService = service;
     }
     
     public void setCandidates(List<String> c) {
@@ -77,10 +80,7 @@ public class BoCandidatesView extends LinearLayout {
             @Override
             public void onClick(View arg0) {
                 System.out.println("choose "+s);
-                final InputConnection ic = 
-                        inputMethodService.getCurrentInputConnection();
-                ic.setComposingText("", 0);
-                ic.commitText(s, 1);
+                inputService.sendString(s);
             }
         });
         elmt.setText(s);

@@ -348,10 +348,38 @@ public class BoInput extends InputMethodService
         getCurrentInputConnection().sendKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
     }
+
+    private void appendComposing(String s) {
+        mComposing.append(s);
+        updateCandidates();
+        getCurrentInputConnection().setComposingText(mComposing, 1);
+    }
+    private void deleteComposing() {
+        final int length = mComposing.length();
+        mComposing.delete(length - 1, length);
+        updateCandidates();
+        getCurrentInputConnection().setComposingText(mComposing, 1);
+    }
+    private void clearComposing() {
+        mComposing.setLength(0);
+        updateCandidates();
+        getCurrentInputConnection().commitText("", 0);
+    }
+    private void confirmComposing() {
+        getCurrentInputConnection().finishComposingText();
+        clearComposing();
+    }
     
+
     /**
      * Helper to send a character to the editor as raw key events.
      */
+    public void sendString(String input) {
+        for(int i=0; i<input.length(); i++) {
+            sendKey(input.charAt(i));
+        }
+        clearComposing();
+    }
     private void sendKey(int keyCode) {
         switch (keyCode) {
             case '\n':
@@ -371,17 +399,15 @@ public class BoInput extends InputMethodService
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
 System.out.println("onKey: "+primaryCode);
-        if (isWordSeparator(primaryCode)) {
+        if (isSpace(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
                 commitTyped(getCurrentInputConnection());
+            } else {
+                sendKey(primaryCode);
             }
-            sendKey(primaryCode);
-            updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (primaryCode == Keyboard.KEYCODE_DELETE) {
             handleBackspace();
-        } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
-            handleShift();
         } else if (primaryCode == Keyboard.KEYCODE_CANCEL) {
             handleClose();
             return;
@@ -389,19 +415,27 @@ System.out.println("onKey: "+primaryCode);
             // Show a menu or somethin'
         } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE
                 && mInputView != null) {
-            Keyboard current = mInputView.getKeyboard();
-            if (current == mSymbolsKeyboard || current == mSymbolsShiftedKeyboard) {
-                current = mQwertyKeyboard;
-            } else {
-                current = mSymbolsKeyboard;
-            }
-            mInputView.setKeyboard(current);
+            final Keyboard current = mInputView.getKeyboard();
             if (current == mSymbolsKeyboard) {
+                switchKeyboard(mBopomoKeyboard);
+            } else {
+                switchKeyboard(mSymbolsKeyboard);
+            }
+            if (mCurKeyboard == mSymbolsKeyboard) {
                 current.setShifted(false);
             }
         } else {
             handleCharacter(primaryCode, keyCodes);
         }
+    }
+
+    private void switchKeyboard(BoKeyboard kb) {
+        if (mComposing.length() > 0) {
+            commitTyped(getCurrentInputConnection());
+        }
+        reset(false);
+        mCurKeyboard = kb;
+        mInputView.setKeyboard(mCurKeyboard);
     }
 
     @Override
@@ -468,11 +502,8 @@ System.out.println("candidates for "+mComposing+": "+BoWordTable.join(list, ", "
             boolean typedWordValid) {
         if (suggestions != null && suggestions.size() > 0) {
             setCandidatesViewShown(true);
-        } else if (isExtractViewShown()) {
-            setCandidatesViewShown(true);
-        }
+        }         
         if (mCandidateView != null) {
-            //mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
             mCandidateView.setCandidates(suggestions);
         }
     }
@@ -480,17 +511,14 @@ System.out.println("candidates for "+mComposing+": "+BoWordTable.join(list, ", "
     private void handleBackspace() {
         final int length = mComposing.length();
         if (length > 1) {
-            mComposing.delete(length - 1, length);
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-            updateCandidates();
-        } else if (length > 0) {
-            mComposing.setLength(0);
+            deleteComposing();
+        } else if (length == 1) {
+            clearComposing();
             getCurrentInputConnection().commitText("", 0);
-            updateCandidates();
         } else {
+            getCurrentInputConnection().commitText("", 0);
             keyDownUp(KeyEvent.KEYCODE_DEL);
         }
-        updateShiftKeyState(getCurrentInputEditorInfo());
     }
 
     private void handleShift() {
@@ -522,15 +550,15 @@ System.out.println("candidates for "+mComposing+": "+BoWordTable.join(list, ", "
             return;
         }
         
-        if(primaryCode == 33) { //space
-            ic.commitText(String.valueOf((char) primaryCode), 1);
+        if((char)primaryCode == ' ') {
+System.out.println("space pressed");
+            confirmComposing();
         } else {        
-            final String bopomoKey = wordTable.getKeyName(String.valueOf((char)primaryCode));
+            final String bopomoKey = wordTable.getKeyName(
+                    String.valueOf((char)primaryCode));
 System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
-            mComposing.append(bopomoKey);
-            ic.setComposingText(mComposing, 1);
+            appendComposing(bopomoKey);
         }
-        updateCandidates();
     }
 
     private void handleClose() {
@@ -551,6 +579,10 @@ System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
     
     private String getWordSeparators() {
         return mWordSeparators;
+    }
+
+    private boolean isSpace(int keyCode) {
+        return (char)keyCode == ' ';
     }
     
     public static boolean isWordSeparator(int code) {
