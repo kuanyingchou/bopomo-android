@@ -349,27 +349,6 @@ public class BoInput extends InputMethodService
                 new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
     }
 
-    private void appendComposing(String s) {
-        mComposing.append(s);
-        updateCandidates();
-        getCurrentInputConnection().setComposingText(mComposing, 1);
-    }
-    private void deleteComposing() {
-        final int length = mComposing.length();
-        mComposing.delete(length - 1, length);
-        updateCandidates();
-        getCurrentInputConnection().setComposingText(mComposing, 1);
-    }
-    private void clearComposing() {
-        mComposing.setLength(0);
-        updateCandidates();
-        getCurrentInputConnection().commitText("", 0);
-    }
-    private void confirmComposing() {
-        getCurrentInputConnection().finishComposingText();
-        clearComposing();
-    }
-    
 
     /**
      * Helper to send a character to the editor as raw key events.
@@ -593,6 +572,27 @@ System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
     @Override public void onWindowHidden() {
         setCandidatesViewShown(false);
         Log.d("ken", "onWindowHidden");
+    }
+    
+    private void appendComposing(String s) {
+        mComposing.append(s);
+        updateCandidates();
+        getCurrentInputConnection().setComposingText(mComposing, 1);
+    }
+    private void deleteComposing() {
+        final int length = mComposing.length();
+        mComposing.delete(length - 1, length);
+        updateCandidates();
+        getCurrentInputConnection().setComposingText(mComposing, 1);
+    }
+    private void clearComposing() {
+        mComposing.setLength(0);
+        updateCandidates();
+        getCurrentInputConnection().commitText("", 0);
+    }
+    private void confirmComposing() {
+        getCurrentInputConnection().finishComposingText();
+        clearComposing();
     }
     
 }
