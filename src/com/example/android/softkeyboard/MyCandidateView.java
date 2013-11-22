@@ -26,20 +26,22 @@ public class MyCandidateView extends LinearLayout {
     private InputMethodService inputMethodService;
     private List<String> list = new ArrayList<String>();
     private LinearLayout listView;
-    private TextView elementView;
     
     public MyCandidateView(final Context context) {
         super(context);
         
         setBackgroundColor(Color.GRAY);
 
-        elementView = new TextView(context);
-
         listView = new LinearLayout(context);
         
+        final TextView label = new TextView(context);
+        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(5, 50);
+        label.setLayoutParams(lp);
+        label.setText(" ");
+        addView(label);
+
         final HorizontalScrollView scroller = new HorizontalScrollView(context);
         scroller.addView(listView);
-        
         addView(scroller);
       
     }
