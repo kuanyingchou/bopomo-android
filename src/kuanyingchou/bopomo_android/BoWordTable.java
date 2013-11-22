@@ -1,20 +1,20 @@
-package com.example.android.softkeyboard;
+package kuanyingchou.bopomo_android;
 
 import java.io.*;
 import java.util.*;
 
 
-public class WordTable {
-    private final Map<String, List<Word>> words =
-            new HashMap<String, List<Word>>();
+public class BoWordTable {
+    private final Map<String, List<BoWord>> words =
+            new HashMap<String, List<BoWord>>();
     private final Map<String, String> keys =
             new HashMap<String, String>();
 
-    public WordTable(String path) {
+    public BoWordTable(String path) {
         parse(path);
     }
     
-    public WordTable(InputStream is) {
+    public BoWordTable(InputStream is) {
         parse(is);
     }
     
@@ -59,10 +59,10 @@ public class WordTable {
                     final String trimmedLine = line.trim();
                     final String[] kv = trimmedLine.split(" ");
                     if(words.containsKey(kv[0])) {
-                        words.get(kv[0]).add(new Word(kv[1]));
+                        words.get(kv[0]).add(new BoWord(kv[1]));
                     } else {
-                        final List<Word> a = new ArrayList<Word>();
-                        a.add(new Word(kv[1]));
+                        final List<BoWord> a = new ArrayList<BoWord>();
+                        a.add(new BoWord(kv[1]));
                         words.put(kv[0], a);
                     }
                     //System.out.println("add "+kv[1] + " to " +kv[0]);                    
@@ -75,17 +75,17 @@ public class WordTable {
         }
         System.out.println("done");
     }
-    public List<Word> get(String keyName) {
+    public List<BoWord> get(String keyName) {
 
         final String key = getKeyCode(keyName);
-        if(key == null) return new ArrayList<Word>();
+        if(key == null) return new ArrayList<BoWord>();
 
         System.out.println("get words for "+keyName+" : "+key);        
         
         if(words.containsKey(key)) {
             return words.get(key);
         } else {
-            return new ArrayList<Word>();
+            return new ArrayList<BoWord>();
             //throw new RuntimeException("key not found:  "+ key);
         }
     }
@@ -110,7 +110,7 @@ public class WordTable {
 
     //===========================================
     public static void testBasic() {
-        final WordTable t = new WordTable("./assets/phone.cin");
+        final BoWordTable t = new BoWordTable("./assets/phone.cin");
 
         System.out.println(t.get("ji3").get(0));  
         System.out.println(t.get("g4").get(0)); 
@@ -119,7 +119,7 @@ public class WordTable {
         System.out.println(t.get("u/3").get(0));  
     }
     public static void testArgs(String[] keys) {
-        final WordTable t = new WordTable("./assets/phone.cin");
+        final BoWordTable t = new BoWordTable("./assets/phone.cin");
         for(int i=0; i<keys.length; i++) {
             //System.out.println(join(t.get(keys[i]), ", "));
             //System.out.print(t.get(keys[i]).get(0));
@@ -128,7 +128,7 @@ public class WordTable {
         System.out.println();
     }
     public static void testInterpreter() throws IOException {
-        final WordTable table = new WordTable("./assets/phone.cin");
+        final BoWordTable table = new BoWordTable("./assets/phone.cin");
         final BufferedReader br = new BufferedReader(
                 new InputStreamReader(System.in));
         while(true) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.softkeyboard;
+package kuanyingchou.bopomo_android;
 
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
@@ -23,15 +23,15 @@ import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodSubtype;
 
-public class LatinKeyboardView extends KeyboardView {
+public class BoKeyboardView extends KeyboardView {
 
     static final int KEYCODE_OPTIONS = -100;
 
-    public LatinKeyboardView(Context context, AttributeSet attrs) {
+    public BoKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public LatinKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+    public BoKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -46,7 +46,7 @@ public class LatinKeyboardView extends KeyboardView {
     }
 
     void setSubtypeOnSpaceKey(final InputMethodSubtype subtype) {
-        final LatinKeyboard keyboard = (LatinKeyboard)getKeyboard();
+        final BoKeyboard keyboard = (BoKeyboard)getKeyboard();
         keyboard.setSpaceIcon(getResources().getDrawable(subtype.getIconResId()));
         invalidateAllKeys();
     }

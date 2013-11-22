@@ -1,12 +1,12 @@
-package com.example.android.softkeyboard;
+package kuanyingchou.bopomo_android;
 
-public class Word {
+public class BoWord {
     private final char value;
 
-    Word(char c) {
+    BoWord(char c) {
         value = c;
     }
-    Word(String s) {
+    BoWord(String s) {
         value = s.charAt(0);
     }
     public String toString() {

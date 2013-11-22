@@ -1,4 +1,4 @@
-package com.example.android.softkeyboard;
+package kuanyingchou.bopomo_android;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,28 +21,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
-public class MyCandidateView extends LinearLayout {
+public class BoCandidatesView extends LinearLayout {
     
     private InputMethodService inputMethodService;
     private List<String> list = new ArrayList<String>();
     private LinearLayout listView;
+    final private HorizontalScrollView scroller;
+    final private int elmtSize = 20;
     
-    public MyCandidateView(final Context context) {
+    public BoCandidatesView(final Context context) {
         super(context);
         
-        setBackgroundColor(Color.GRAY);
+        setBackgroundColor(Color.WHITE);
 
         listView = new LinearLayout(context);
         
-        final TextView label = new TextView(context);
-        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(5, 50);
-        label.setLayoutParams(lp);
-        label.setText(" ");
-        addView(label);
+        scroller = new HorizontalScrollView(context);
+        final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, 
+                LayoutParams.WRAP_CONTENT);
+        lp.weight = 1;
+        scroller.setLayoutParams(lp);
 
-        final HorizontalScrollView scroller = new HorizontalScrollView(context);
         scroller.addView(listView);
+
+        final View prev = createNextPrevButton(FOCUS_LEFT);
+        final View next = createNextPrevButton(FOCUS_RIGHT);
+
+        addView(prev);
         addView(scroller);
+        addView(next);
       
     }
     
@@ -56,13 +63,16 @@ public class MyCandidateView extends LinearLayout {
         for(final String s: list) {
             listView.addView(createElement(s));
         }
+        scroller.fullScroll(FOCUS_LEFT);
     }
     
     private View createElement(final String s) {
         final Button elmt = new Button(getContext());
+        /*
         final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(50, 50);
         elmt.setLayoutParams(lp);
-        elmt.setTextSize(20);
+        */
+        elmt.setTextSize(elmtSize);
         elmt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -75,6 +85,21 @@ public class MyCandidateView extends LinearLayout {
         });
         elmt.setText(s);
         return elmt;
+    }
+
+    private View createNextPrevButton(final int direction) {
+        final Button btn = new Button(getContext());
+        btn.setText((direction == FOCUS_RIGHT)? ">": "<");
+        btn.setTextSize(elmtSize);
+        btn.setLayoutParams(new LayoutParams(
+                LayoutParams.WRAP_CONTENT, 
+                LayoutParams.WRAP_CONTENT));
+        btn.setOnClickListener(new OnClickListener() {
+            public void onClick(View arg) {
+                scroller.pageScroll(direction);
+            }
+        });
+        return btn;
     }
 
     public void clear() {

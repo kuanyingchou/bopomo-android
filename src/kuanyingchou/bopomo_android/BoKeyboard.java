@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.softkeyboard;
+package kuanyingchou.bopomo_android;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -23,16 +23,16 @@ import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.view.inputmethod.EditorInfo;
 
-public class LatinKeyboard extends Keyboard {
+public class BoKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
     
-    public LatinKeyboard(Context context, int xmlLayoutResId) {
+    public BoKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId);
     }
 
-    public LatinKeyboard(Context context, int layoutTemplateResId, 
+    public BoKeyboard(Context context, int layoutTemplateResId, 
             CharSequence characters, int columns, int horizontalPadding) {
         super(context, layoutTemplateResId, characters, columns, horizontalPadding);
     }
@@ -40,7 +40,7 @@ public class LatinKeyboard extends Keyboard {
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, 
             XmlResourceParser parser) {
-        Key key = new LatinKey(res, parent, x, y, parser);
+        Key key = new BoKey(res, parent, x, y, parser);
         if (key.codes[0] == 10) {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
@@ -91,9 +91,9 @@ public class LatinKeyboard extends Keyboard {
         }
     }
 
-    static class LatinKey extends Keyboard.Key {
+    static class BoKey extends Keyboard.Key {
         
-        public LatinKey(Resources res, Keyboard.Row parent, int x, int y, XmlResourceParser parser) {
+        public BoKey(Resources res, Keyboard.Row parent, int x, int y, XmlResourceParser parser) {
             super(res, parent, x, y, parser);
         }
         
