@@ -304,7 +304,7 @@ public class BoInput extends InputMethodService
      */
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
-            final List<BoWord> candidates = wordTable.get(mComposing.toString());
+            final List<BoWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
             mComposing.setLength(0);
@@ -461,10 +461,22 @@ System.out.println("onText: "+text);
      * text.  This will need to be filled in by however you are determining
      * candidates.
      */
+    private boolean canCompose(String s) {
+        String test = mComposing.toString() + s; 
+        final List<BoWord> words = wordTable.get(test);
+        if(words.size() <= 1) {
+            words.addAll(wordTable.getPossible(test, 100));
+        }
+        return words.size() > 0;
+    }
     private void updateCandidates() {
         //if (!mCompletionOn) {
             if (mComposing.length() > 0) {
                 final List<BoWord> words = wordTable.get(mComposing.toString());
+                if(words.size() <= 1) {
+                    words.addAll(wordTable.getPossible(mComposing.toString(), 100));
+                }
+                //>>>
                 final List<String> list = new ArrayList<String>();
                 for(BoWord w : words) {
                     list.add(w.toString());
@@ -536,7 +548,10 @@ System.out.println("space pressed");
             final String bopomoKey = wordTable.getKeyName(
                     String.valueOf((char)primaryCode));
 System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
-            appendComposing(bopomoKey);
+
+            if(canCompose(bopomoKey)) {
+                appendComposing(bopomoKey);
+            }
         }
     }
 

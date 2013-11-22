@@ -7,9 +7,11 @@ import java.util.*;
 public class BoWordTable {
     private final Map<String, List<BoWord>> words =
             new HashMap<String, List<BoWord>>();
+    private final Map<String, List<BoWord>> possibleWords =
+            new HashMap<String, List<BoWord>>();
     private final Map<String, String> keys =
             new HashMap<String, String>();
-
+    
     public BoWordTable(String path) {
         parse(path);
     }
@@ -65,6 +67,20 @@ public class BoWordTable {
                         a.add(new BoWord(kv[1]));
                         words.put(kv[0], a);
                     }
+
+                    //[ possible words
+                    if(kv[0].length() > 1) {
+                        for(int i=1; i<kv[0].length(); i++) {
+                            final String pk = kv[0].substring(0, i);
+                            if(possibleWords.containsKey(pk)) {
+                                possibleWords.get(pk).add(new BoWord(kv[1]));
+                            } else {
+                                final List<BoWord> a = new ArrayList<BoWord>();
+                                a.add(new BoWord(kv[1]));
+                                possibleWords.put(pk, a);
+                            }
+                        }
+                    }
                     //System.out.println("add "+kv[1] + " to " +kv[0]);                    
                     break;
                 }
@@ -75,6 +91,7 @@ public class BoWordTable {
         }
         System.out.println("done");
     }
+
     public List<BoWord> get(String keyName) {
 
         final String key = getKeyCode(keyName);
@@ -89,6 +106,20 @@ public class BoWordTable {
             //throw new RuntimeException("key not found:  "+ key);
         }
     }
+
+    public List<BoWord> getPossible(String keyName, int limit) {
+        final String key = getKeyCode(keyName);
+        if(key == null) return new ArrayList<BoWord>();
+        if(possibleWords.containsKey(key)) {
+            final List<BoWord> res = possibleWords.get(key);
+            if(limit > res.size()) return res;
+            else return res.subList(0, limit);
+        } else {
+            return new ArrayList<BoWord>();
+            //throw new RuntimeException("key not found:  "+ key);
+        }
+    }
+
     public String getKeyName(String key) {
         if(keys.containsKey(key)) {
             return keys.get(key);
