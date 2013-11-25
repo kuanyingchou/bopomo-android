@@ -1,4 +1,4 @@
-package kuanyingchou.bopomo_android;
+package wen_input;
 
 public class BoWord {
     private final char value;

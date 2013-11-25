@@ -1,4 +1,4 @@
-package kuanyingchou.bopomo_android;
+package wen_input;
 
 import java.util.ArrayList;
 import java.util.List;

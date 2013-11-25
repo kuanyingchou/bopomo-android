@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kuanyingchou.bopomo_android;
+package wen_input;
 
 import android.content.res.AssetManager;
 import android.inputmethodservice.InputMethodService;

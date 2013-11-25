@@ -1,4 +1,4 @@
-package kuanyingchou.bopomo_android;
+package wen_input;
 
 import java.io.*;
 import java.util.*;
