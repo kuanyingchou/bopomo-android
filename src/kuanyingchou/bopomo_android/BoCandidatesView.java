@@ -68,6 +68,11 @@ public class BoCandidatesView extends LinearLayout {
         }
         scroller.fullScroll(FOCUS_LEFT);
     }
+
+    public String getFirstCandidate() {
+        if(list.size() > 0) { return list.get(0); }
+        else { return null; }
+    }
     
     private View createElement(final String s) {
         final Button elmt = new Button(getContext());

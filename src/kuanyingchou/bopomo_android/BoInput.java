@@ -263,14 +263,10 @@ public class BoInput extends InputMethodService
         
         // If the current selection in the text view changes, we should
         // clear whatever candidate text we have.
-        if (mComposing.length() > 0 && (newSelStart != candidatesEnd
-                || newSelEnd != candidatesEnd)) {
-            mComposing.setLength(0);
-            updateCandidates();
-            InputConnection ic = getCurrentInputConnection();
-            if (ic != null) {
-                ic.finishComposingText();
-            }
+        if (mComposing.length() > 0 && 
+                (newSelStart != candidatesEnd || 
+                   newSelEnd != candidatesEnd)) {
+            confirmComposing();
         }
     }
 
@@ -304,6 +300,7 @@ public class BoInput extends InputMethodService
      */
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
+            
             final List<BoWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
@@ -350,15 +347,16 @@ public class BoInput extends InputMethodService
     }
 
 
-    /**
-     * Helper to send a character to the editor as raw key events.
-     */
     public void sendString(String input) {
         for(int i=0; i<input.length(); i++) {
             sendKey(input.charAt(i));
         }
         clearComposing();
     }
+
+    /**
+     * Helper to send a character to the editor as raw key events.
+     */
     private void sendKey(int keyCode) {
         switch (keyCode) {
             case '\n':
