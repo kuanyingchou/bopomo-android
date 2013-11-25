@@ -10,12 +10,14 @@ Yet another bopomo keyboard for Android.
 
     wget --user-agent Mozilla --output-document=- www.google.com/search?q=java 
 
-    cat test.result | sed -e 's/.*About \([0-9,]\+\) results/\1\n/g' | head -1
+    sed -e 's/.*About \([0-9,]\+\) results/\1\n/g' | head -1
 
 ## Todo
 
 - word/phrase frequency from Google
+- phrase suggestions
 - key component replacement
 - better word suggestions when given incomplete keys
-- phrase suggestions
-- find a better project name 
+ 
+## Done
+- find a better project name

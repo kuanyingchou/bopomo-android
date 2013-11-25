@@ -1,4 +1,4 @@
-package wen_input;
+package org.wen_input;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
-public class BoCandidatesView extends LinearLayout {
+public class WenCandidatesView extends LinearLayout {
     
-    private BoInput inputService;
+    private WenInputService inputService;
     private List<String> list = new ArrayList<String>();
     private LinearLayout listView;
     final private HorizontalScrollView scroller;
     final private int elmtSize = 24;
     
-    public BoCandidatesView(final Context context) {
+    public WenCandidatesView(final Context context) {
         super(context);
         
         setBackgroundColor(Color.WHITE);
@@ -56,7 +56,7 @@ public class BoCandidatesView extends LinearLayout {
       
     }
     
-    public void setService(BoInput service) {
+    public void setService(WenInputService service) {
         inputService = service;
     }
     

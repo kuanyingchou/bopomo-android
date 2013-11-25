@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package wen_input;
+package org.wen_input;
 
 import android.content.res.AssetManager;
 import android.inputmethodservice.InputMethodService;
@@ -38,13 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BoInput extends InputMethodService 
+public class WenInputService extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
     
     private InputMethodManager mInputMethodManager;
 
-    private BoKeyboardView mInputView;
-    private BoCandidatesView mCandidateView;
+    private KeyboardView mInputView;
+    private WenCandidatesView mCandidateView;
     private CompletionInfo[] mCompletions;
     
     private StringBuilder mComposing = new StringBuilder();
@@ -55,16 +55,16 @@ public class BoInput extends InputMethodService
     private long mLastShiftTime;
     private long mMetaState;
     
-    private BoKeyboard mSymbolsKeyboard;
-    private BoKeyboard mSymbolsShiftedKeyboard;
-    private BoKeyboard mQwertyKeyboard;
-    private BoKeyboard mBopomoKeyboard;
+    private WenKeyboard mSymbolsKeyboard;
+    private WenKeyboard mSymbolsShiftedKeyboard;
+    private WenKeyboard mQwertyKeyboard;
+    private WenKeyboard mBopomoKeyboard;
     
-    private BoKeyboard mCurKeyboard;
+    private WenKeyboard mCurKeyboard;
     
     private String mWordSeparators;
     
-    private BoWordTable wordTable;
+    private WenWordTable wordTable;
     
     @Override public void onCreate() {
         super.onCreate();
@@ -78,7 +78,7 @@ public class BoInput extends InputMethodService
     private void loadWordTable() {
         final AssetManager am = getAssets();
         try {
-            wordTable = new BoWordTable(am.open("phone.cin"));
+            wordTable = new WenWordTable(am.open("phone.cin"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,14 +93,14 @@ public class BoInput extends InputMethodService
             if (displayWidth == mLastDisplayWidth) return;
             mLastDisplayWidth = displayWidth;
         }
-        mQwertyKeyboard = new BoKeyboard(this, R.xml.qwerty);
-        mSymbolsKeyboard = new BoKeyboard(this, R.xml.symbols);
-        mSymbolsShiftedKeyboard = new BoKeyboard(this, R.xml.symbols_shift);
-        mBopomoKeyboard = new BoKeyboard(this, R.xml.bopomo);
+        mQwertyKeyboard = new WenKeyboard(this, R.xml.qwerty);
+        mSymbolsKeyboard = new WenKeyboard(this, R.xml.symbols);
+        mSymbolsShiftedKeyboard = new WenKeyboard(this, R.xml.symbols_shift);
+        mBopomoKeyboard = new WenKeyboard(this, R.xml.bopomo);
     }
     
     @Override public View onCreateInputView() {
-        mInputView = (BoKeyboardView) getLayoutInflater().inflate(
+        mInputView = (KeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null); //>>>
         mInputView.setOnKeyboardActionListener(this);
         mInputView.setKeyboard(mBopomoKeyboard);
@@ -108,7 +108,7 @@ public class BoInput extends InputMethodService
     }
 
     @Override public View onCreateCandidatesView() {
-        mCandidateView = new BoCandidatesView(this);
+        mCandidateView = new WenCandidatesView(this);
         mCandidateView.setService(this);
         return mCandidateView; }
 
@@ -242,13 +242,11 @@ public class BoInput extends InputMethodService
         // Apply the selected keyboard to the input view.
         mInputView.setKeyboard(mCurKeyboard);
         mInputView.closing();
-        final InputMethodSubtype subtype = mInputMethodManager.getCurrentInputMethodSubtype();
-        mInputView.setSubtypeOnSpaceKey(subtype);
     }
 
     @Override
     public void onCurrentInputMethodSubtypeChanged(InputMethodSubtype subtype) {
-        mInputView.setSubtypeOnSpaceKey(subtype);
+        super.onCurrentInputMethodSubtypeChanged(subtype);
     }
 
     /**
@@ -301,7 +299,7 @@ public class BoInput extends InputMethodService
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
             
-            final List<BoWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
+            final List<WenWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
             mComposing.setLength(0);
@@ -388,8 +386,6 @@ System.out.println("onKey: "+primaryCode);
         } else if (primaryCode == Keyboard.KEYCODE_CANCEL) {
             handleClose();
             return;
-        } else if (primaryCode == BoKeyboardView.KEYCODE_OPTIONS) {
-            // Show a menu or somethin'
         } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE
                 && mInputView != null) {
             final Keyboard current = mInputView.getKeyboard();
@@ -406,7 +402,7 @@ System.out.println("onKey: "+primaryCode);
         }
     }
 
-    private void switchKeyboard(BoKeyboard kb) {
+    private void switchKeyboard(WenKeyboard kb) {
         if (mComposing.length() > 0) {
             commitTyped(getCurrentInputConnection());
         }
@@ -461,7 +457,7 @@ System.out.println("onText: "+text);
      */
     private boolean canCompose(String s) {
         String test = mComposing.toString() + s; 
-        final List<BoWord> words = wordTable.get(test);
+        final List<WenWord> words = wordTable.get(test);
         if(words.size() <= 1) {
             words.addAll(wordTable.getPossible(test, 100));
         }
@@ -470,16 +466,16 @@ System.out.println("onText: "+text);
     private void updateCandidates() {
         //if (!mCompletionOn) {
             if (mComposing.length() > 0) {
-                final List<BoWord> words = wordTable.get(mComposing.toString());
+                final List<WenWord> words = wordTable.get(mComposing.toString());
                 if(words.size() <= 1) {
                     words.addAll(wordTable.getPossible(mComposing.toString(), 100));
                 }
                 //>>>
                 final List<String> list = new ArrayList<String>();
-                for(BoWord w : words) {
+                for(WenWord w : words) {
                     list.add(w.toString());
                 }
-System.out.println("candidates for "+mComposing+": "+BoWordTable.join(list, ", "));                
+System.out.println("candidates for "+mComposing+": "+WenWordTable.join(list, ", "));                
                 setSuggestions(list, true, true);
             } else {
                 setSuggestions(null, false, false);
