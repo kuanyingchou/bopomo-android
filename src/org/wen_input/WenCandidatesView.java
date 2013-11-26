@@ -24,7 +24,7 @@ import android.widget.LinearLayout.LayoutParams;
 public class WenCandidatesView extends LinearLayout {
     
     private WenInputService inputService;
-    private List<String> list = new ArrayList<String>();
+    private List<? extends Object> list = new ArrayList<Object>();
     private LinearLayout listView;
     final private HorizontalScrollView scroller;
     final private int elmtSize = 24;
@@ -60,16 +60,16 @@ public class WenCandidatesView extends LinearLayout {
         inputService = service;
     }
     
-    public void setCandidates(List<String> c) {
-        list = c == null? new ArrayList<String>(): c;
+    public void setCandidates(List<? extends Object> c) {
+        list = (c == null)? new ArrayList<Object>(): c;
         listView.removeAllViews();
-        for(final String s: list) {
-            listView.addView(createElement(s));
+        for(final Object s: list) {
+            listView.addView(createElement(s.toString()));
         }
         scroller.fullScroll(FOCUS_LEFT);
     }
 
-    public String getFirstCandidate() {
+    public Object getFirstCandidate() {
         if(list.size() > 0) { return list.get(0); }
         else { return null; }
     }
@@ -108,6 +108,6 @@ public class WenCandidatesView extends LinearLayout {
     }
 
     public void clear() {
-        setCandidates(new ArrayList<String>());
+        setCandidates(new ArrayList<Object>());
     }
 }

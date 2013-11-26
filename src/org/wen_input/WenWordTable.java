@@ -21,7 +21,7 @@ public class WenWordTable {
     }
     
     private void parse(InputStream is) {
-        final String data = readTextFile(is);
+        final String data = WenUtil.readTextFile(is);
         parse(data);
     }
     
@@ -154,7 +154,7 @@ public class WenWordTable {
         for(int i=0; i<keys.length; i++) {
             //System.out.println(join(t.get(keys[i]), ", "));
             //System.out.print(t.get(keys[i]).get(0));
-            System.out.println(join(subList(t.get(keys[i]), 10), ", "));
+            System.out.println(WenUtil.join(WenUtil.subList(t.get(keys[i]), 10), ", "));
         }
         System.out.println();
     }
@@ -171,74 +171,6 @@ public class WenWordTable {
         //testBasic();
         //testArgs(args);
         testInterpreter();
-    }
-
-    //===============================
-    public static <T> List<T> subList(List<T> target, int size) {
-        if(target.size() <= size) {
-            return new ArrayList<T>(target);
-        } else {
-            return target.subList(0, size);
-        }
-    }
-
-    public static String join(List<?> objs, String del) {
-        return join(objs.toArray(), del);
-    }
-    public static <T> String join(T[] objs, String del) {
-        StringBuilder sb = new StringBuilder();
-        if(objs.length > 1) {
-            sb.append(objs[0].toString());
-        }
-        for(int i=1; i<objs.length; i++) {
-            sb.append(del);
-            sb.append(objs[i]);
-        }
-        return sb.toString();
-    }
-
-    public static String readTextFile(InputStream is) {
-        String everything="";
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append('\n');
-                line = br.readLine();
-            }
-            everything = sb.toString();
-            br.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-        }
-        return everything;
-    }
-    
-    public static String readTextFile(String path) {
-        String everything="";
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(path));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append('\n');
-                line = br.readLine();
-            }
-            everything = sb.toString();
-            br.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-        }
-        return everything;
     }
 }
 

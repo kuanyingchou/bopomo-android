@@ -65,6 +65,7 @@ public class WenInputService extends InputMethodService
     private String mWordSeparators;
     
     private WenWordTable wordTable;
+    private WenPhraseTable phraseTable; 
     
     @Override public void onCreate() {
         super.onCreate();
@@ -72,13 +73,14 @@ public class WenInputService extends InputMethodService
                 (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
-        loadWordTable();
+        loadTables();
     }
 
-    private void loadWordTable() {
+    private void loadTables() {
         final AssetManager am = getAssets();
         try {
             wordTable = new WenWordTable(am.open("phone.cin"));
+            phraseTable = new WenPhraseTable(am.open("tsi.src"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -350,6 +352,11 @@ public class WenInputService extends InputMethodService
             sendKey(input.charAt(i));
         }
         clearComposing();
+        
+        final String last = String.valueOf(input.charAt(input.length()-1));
+        if (mCandidateView != null && phraseTable != null) {
+            mCandidateView.setCandidates(phraseTable.get(last));
+        }
     }
 
     /**
@@ -475,7 +482,7 @@ System.out.println("onText: "+text);
                 for(WenWord w : words) {
                     list.add(w.toString());
                 }
-System.out.println("candidates for "+mComposing+": "+WenWordTable.join(list, ", "));                
+System.out.println("candidates for "+mComposing+": "+WenUtil.join(list, ", "));                
                 setSuggestions(list, true, true);
             } else {
                 setSuggestions(null, false, false);
