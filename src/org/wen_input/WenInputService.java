@@ -355,7 +355,14 @@ public class WenInputService extends InputMethodService
         
         final String last = String.valueOf(input.charAt(input.length()-1));
         if (mCandidateView != null && phraseTable != null) {
-            mCandidateView.setCandidates(phraseTable.get(last));
+            List<WenPhrase> candidates = phraseTable.get(last);
+            List<String> trimmed = new ArrayList<String>();
+            int size = Math.min(candidates.size(), 20); 
+            for(int i=0; i<size; i++) {
+                System.out.println(WenUtil.join(candidates, ", "));
+                trimmed.add(candidates.get(i).value.substring(1));
+            }
+            mCandidateView.setCandidates(trimmed);
         }
     }
 
