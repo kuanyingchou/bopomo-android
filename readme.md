@@ -1,6 +1,4 @@
-# Bopomo Keyboard for Android
-
-Yet another bopomo keyboard for Android.
+# wen-input - a simple bopomo input service for Android.  
 
 ## Useful adb commands
 
@@ -14,8 +12,8 @@ Yet another bopomo keyboard for Android.
 
 ## Todo
 
-- word/phrase frequency from Google
 - phrase suggestions
+- word/phrase frequency from Google
 - key component replacement
 - better word suggestions when given incomplete keys
  
