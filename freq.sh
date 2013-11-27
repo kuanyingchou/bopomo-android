@@ -11,9 +11,9 @@ while read line; do
   else 
     if $start_reading; then
       word=`echo $line | cut -d' ' -f2`
-      echo "word = $word"
-      # count=`wget --user-agent Mozilla --output-document=- www.google.com/search?q=java | cat test.result | sed -e 's/.*About \([0-9,]\+\) results/\1\n/g' | head -1`
-      # echo $word $count >> output
+      # echo "word = $word"
+      count=`wget --user-agent Mozilla --output-document=- www.google.com/search?q=$word 2> /dev/null | sed -e 's/.*About \([0-9,]\+\) results/\1\n/g' | head -1 | sed -e 's/,//g'`
+      echo "$word $count" | tee -a output 
     fi
   fi
   sleep 1
