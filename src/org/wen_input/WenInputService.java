@@ -80,7 +80,7 @@ public class WenInputService extends InputMethodService
         final AssetManager am = getAssets();
         try {
             wordTable = new WenWordTable(am.open("phone.cin"));
-            phraseTable = new WenPhraseTable(am.open("tsi.src"));
+            phraseTable = new WenPhraseTable(am.open("tsi.src.sorted"));
         } catch (IOException e) {
             e.printStackTrace();
         }

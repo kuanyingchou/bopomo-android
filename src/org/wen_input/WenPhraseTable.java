@@ -34,7 +34,7 @@ public class WenPhraseTable {
         try { 
             String line = reader.readLine();
             int count=0;
-            while(line != null && count < 1000) {
+            while(line != null && count < 5000) {
                 final String[] values = line.split("\\s+");
                 if(values.length >= 3) {
                     int freq = 0; 
@@ -43,13 +43,14 @@ public class WenPhraseTable {
                     } catch(NumberFormatException e) {
                         e.printStackTrace();
                     }
-                    final WenPhrase phrase = new WenPhrase(
-                        values[0], 
-                        freq, 
-                        Arrays.copyOfRange(values, 2, values.length));
-    
-                    if(phrase.value.length() <= 2) {
-System.out.println(phrase);
+                    
+                    if(values[0].length() >= 2) {
+                        final WenPhrase phrase = new WenPhrase(
+                            values[0], 
+                            freq, 
+                            Arrays.copyOfRange(values, 2, values.length));
+        
+    //System.out.println(phrase);
                         final String key = String.valueOf(values[0].charAt(0));
                         if(table.containsKey(key)) {
                             final List<WenPhrase> phrases = table.get(key);
@@ -63,6 +64,7 @@ System.out.println(phrase);
                             table.put(key, list);
                         }
                         count++;
+                        
                     }
                 }
                 line = reader.readLine();
