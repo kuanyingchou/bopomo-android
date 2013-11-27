@@ -1,4 +1,4 @@
-package kuanyingchou.bopomo_android;
+package org.wen_input;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
-public class BoCandidatesView extends LinearLayout {
+public class WenCandidatesView extends LinearLayout {
     
-    private BoInput inputService;
-    private List<String> list = new ArrayList<String>();
+    private WenInputService inputService;
+    private List<? extends Object> list = new ArrayList<Object>();
     private LinearLayout listView;
     final private HorizontalScrollView scroller;
     final private int elmtSize = 24;
     
-    public BoCandidatesView(final Context context) {
+    public WenCandidatesView(final Context context) {
         super(context);
         
         setBackgroundColor(Color.WHITE);
@@ -56,17 +56,22 @@ public class BoCandidatesView extends LinearLayout {
       
     }
     
-    public void setService(BoInput service) {
+    public void setService(WenInputService service) {
         inputService = service;
     }
     
-    public void setCandidates(List<String> c) {
-        list = c == null? new ArrayList<String>(): c;
+    public void setCandidates(List<? extends Object> c) {
+        list = (c == null)? new ArrayList<Object>(): c;
         listView.removeAllViews();
-        for(final String s: list) {
-            listView.addView(createElement(s));
+        for(final Object s: list) {
+            listView.addView(createElement(s.toString()));
         }
         scroller.fullScroll(FOCUS_LEFT);
+    }
+
+    public Object getFirstCandidate() {
+        if(list.size() > 0) { return list.get(0); }
+        else { return null; }
     }
     
     private View createElement(final String s) {
@@ -103,6 +108,6 @@ public class BoCandidatesView extends LinearLayout {
     }
 
     public void clear() {
-        setCandidates(new ArrayList<String>());
+        setCandidates(new ArrayList<Object>());
     }
 }

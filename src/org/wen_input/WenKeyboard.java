@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kuanyingchou.bopomo_android;
+package org.wen_input;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -23,16 +23,16 @@ import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.view.inputmethod.EditorInfo;
 
-public class BoKeyboard extends Keyboard {
+public class WenKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
     
-    public BoKeyboard(Context context, int xmlLayoutResId) {
+    public WenKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId);
     }
 
-    public BoKeyboard(Context context, int layoutTemplateResId, 
+    public WenKeyboard(Context context, int layoutTemplateResId, 
             CharSequence characters, int columns, int horizontalPadding) {
         super(context, layoutTemplateResId, characters, columns, horizontalPadding);
     }
@@ -40,7 +40,7 @@ public class BoKeyboard extends Keyboard {
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, 
             XmlResourceParser parser) {
-        Key key = new BoKey(res, parent, x, y, parser);
+        Key key = new WenKey(res, parent, x, y, parser);
         if (key.codes[0] == 10) {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
@@ -91,9 +91,9 @@ public class BoKeyboard extends Keyboard {
         }
     }
 
-    static class BoKey extends Keyboard.Key {
+    static class WenKey extends Keyboard.Key {
         
-        public BoKey(Resources res, Keyboard.Row parent, int x, int y, XmlResourceParser parser) {
+        public WenKey(Resources res, Keyboard.Row parent, int x, int y, XmlResourceParser parser) {
             super(res, parent, x, y, parser);
         }
         

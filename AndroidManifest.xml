@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
-        package="kuanyingchou.bopomo_android">
+        package="org.wen_input">
     <uses-sdk android:minSdkVersion="16" />
 
     <supports-screens
@@ -9,7 +9,7 @@
         android:xlargeScreens="true" />
 
     <application android:label="@string/ime_name">
-        <service android:name="BoInput"
+        <service android:name="WenInputService"
                 android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />

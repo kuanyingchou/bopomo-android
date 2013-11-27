@@ -1,12 +1,12 @@
-package kuanyingchou.bopomo_android;
+package org.wen_input;
 
-public class BoWord {
+public class WenWord {
     private final char value;
 
-    BoWord(char c) {
+    WenWord(char c) {
         value = c;
     }
-    BoWord(String s) {
+    WenWord(String s) {
         value = s.charAt(0);
     }
     public String toString() {

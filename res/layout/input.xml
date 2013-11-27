@@ -18,7 +18,7 @@
 */
 -->
 
-<kuanyingchou.bopomo_android.BoKeyboardView
+<org.wen_input.WenKeyboardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/keyboard"
         android:layout_alignParentBottom="true"
