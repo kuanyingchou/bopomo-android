@@ -11,24 +11,56 @@ public class WenWordTable {
             new HashMap<String, List<WenWord>>();
     private final Map<String, String> keys =
             new HashMap<String, String>();
+    private Map<String, Long> freqTable;
+
     
     public WenWordTable(String path) {
-        parse(path);
+        parse(path, null);
     }
     
     public WenWordTable(InputStream is) {
-        parse(is);
+        parse(is, null);
     }
-    
-    private void parse(InputStream is) {
-        final String data = WenUtil.readTextFile(is);
-        parse(data);
+
+    private void parse(InputStream table, InputStream freq) {
+        final String t = WenUtil.readTextFile(table);
+        final String f = (freq == null)? null: WenUtil.readTextFile(freq);
+        parse(t, f);
     }
     
     private enum ParsingState { START, KEYNAME, CHARDEF }
+
+    private void buildFreqTable(String data) {
+        freqTable = new HashMap<String, Long>();
+        final BufferedReader reader = new BufferedReader(
+                new StringReader(data));
+        try { 
+            String line = reader.readLine();
+            ParsingState state = ParsingState.START;
+            while(line != null) {
+                final String[] com = line.split("\\s+");
+                freqTable.put(com[0], Long.valueOf(com[1]));
+                line = reader.readLine();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private long getFrequency(String word) {
+        if(freqTable != null && freqTable.containsKey(word)) {
+            return freqTable.get(word);
+        } else {
+            return 0;
+        }
+    }
     
-    private void parse(String data) {
+    private void parse(String data, String freq) {
         System.out.println("start parsing...");
+
+        if(freq != null) {
+            buildFreqTable(freq);
+        }
         
         final BufferedReader reader = new BufferedReader(
                 new StringReader(data));
@@ -61,10 +93,12 @@ public class WenWordTable {
                     final String trimmedLine = line.trim();
                     final String[] kv = trimmedLine.split(" ");
                     if(words.containsKey(kv[0])) {
-                        words.get(kv[0]).add(new WenWord(kv[1]));
+                        words.get(kv[0]).add(new WenWord(kv[1], 
+                                getFrequency(kv[1])));
                     } else {
                         final List<WenWord> a = new ArrayList<WenWord>();
-                        a.add(new WenWord(kv[1]));
+                        a.add(new WenWord(kv[1], 
+                                getFrequency(kv[1])));
                         words.put(kv[0], a);
                     }
 
@@ -73,10 +107,15 @@ public class WenWordTable {
                         for(int i=1; i<kv[0].length(); i++) {
                             final String pk = kv[0].substring(0, i);
                             if(possibleWords.containsKey(pk)) {
-                                possibleWords.get(pk).add(new WenWord(kv[1]));
+                                final List<WenWord> list = possibleWords.get(pk);
+                                list.add(new WenWord(kv[1], 
+                                        getFrequency(kv[1])));
+                                Collections.sort(list, 
+                                        WenWord.getFrequencyComparator());
                             } else {
                                 final List<WenWord> a = new ArrayList<WenWord>();
-                                a.add(new WenWord(kv[1]));
+                                a.add(new WenWord(kv[1], 
+                                        getFrequency(kv[1])));
                                 possibleWords.put(pk, a);
                             }
                         }
