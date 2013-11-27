@@ -47,7 +47,7 @@ public class WenInputService extends InputMethodService
     private WenCandidatesView mCandidateView;
     private CompletionInfo[] mCompletions;
     
-    private StringBuilder mComposing = new StringBuilder();
+    private Composing mComposing = new Composing();
     private boolean mPredictionOn;
     private boolean mCompletionOn;
     private int mLastDisplayWidth;
@@ -134,7 +134,7 @@ public class WenInputService extends InputMethodService
     }
 
     private void reset(boolean restarting) {
-        mComposing.setLength(0);
+        mComposing.reset();
         updateCandidates();
         
         if (!restarting) {
@@ -224,7 +224,7 @@ public class WenInputService extends InputMethodService
         super.onFinishInput();
         
         // Clear current composing text and candidates.
-        mComposing.setLength(0);
+        mComposing.reset();
         updateCandidates();
         
         // We only hide the candidates window when finishing input on
@@ -304,7 +304,7 @@ public class WenInputService extends InputMethodService
             final List<WenWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
-            mComposing.setLength(0);
+            mComposing.reset();
             updateCandidates();
         }
     }
@@ -470,12 +470,84 @@ System.out.println("onText: "+text);
      * candidates.
      */
     private boolean canCompose(String s) {
-        String test = mComposing.toString() + s; 
+        String test = compose(mComposing.toString(), s); 
         final List<WenWord> words = wordTable.get(test);
         if(words.size() <= 1) {
-            words.addAll(wordTable.getPossible(test, 100));
+            words.addAll(wordTable.getPossible(test, 20));
         }
         return words.size() > 0;
+    }
+    
+    private static class Composing {
+        char prefix;
+        char middle;
+        char suffix;
+        char modifier;
+        
+        public void reset() {
+            prefix = middle = suffix = modifier = 0;
+        }
+        public int length() {
+            return toString().length();
+        }
+        private void add(char c) {
+            if(isPrefix(c)) {
+                prefix = c;
+            } else if(isMiddle(c)) {
+                middle = c;
+            } else if(isSuffix(c)) {
+                suffix = c;
+            } else if(isModifier(c)) {
+                modifier = (modifier == c)? 0: c;
+            } else {
+                //what?
+            }
+        }
+        public void add(String s) {
+            for(int i=0; i<s.length(); i++) {
+                add(s.charAt(i));
+            }
+        }
+        public void set(String s) {
+            reset();
+            add(s);
+        }
+        public void delete() {
+            if(modifier != 0) modifier = 0;
+            else if(suffix != 0) suffix = 0;
+            else if(middle != 0) middle = 0;
+            else if(prefix != 0) prefix = 0;
+            else ; //nothing to delete
+        }
+        private static boolean isPrefix(char c) {
+            return "ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ".indexOf(c) != -1 ;
+        }
+        private static boolean isSuffix(char c) {
+            return "ㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ".indexOf(c) != -1;
+        }
+        private static boolean isMiddle(char c) {
+            return "ㄧㄨㄩ".indexOf(c) != -1;
+        }
+        private static boolean isModifier(char c) {
+            return "ˊˇˋ˙".indexOf(c) != -1;
+        }
+        private String toString(char c) {
+            if(c == 0) return "";
+            else return String.valueOf(c);
+        }
+        public String toString() {
+            return (""+toString(prefix) + toString(middle) + 
+                    toString(suffix) + toString(modifier));
+        }
+        
+    }
+    private String compose(String origin, String addon) {
+        final char a = addon.charAt(0);
+        mComposing = new Composing();
+        mComposing.set(origin);
+        mComposing.add(addon);
+        return mComposing.toString();
+        
     }
     private void updateCandidates() {
         //if (!mCompletionOn) {
@@ -557,9 +629,9 @@ System.out.println("space pressed");
                     String.valueOf((char)primaryCode));
 System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
 
-            if(canCompose(bopomoKey)) {
-                appendComposing(bopomoKey);
-            }
+            //if(canCompose(bopomoKey)) {
+                setComposing(compose(mComposing.toString(), bopomoKey));
+            //}
         }
     }
 
@@ -596,20 +668,24 @@ System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
         setCandidatesViewShown(false);
         Log.d("ken", "onWindowHidden");
     }
-    
-    private void appendComposing(String s) {
-        mComposing.append(s);
+    private void setComposing(String s) {
+        mComposing.set(s);
         updateCandidates();
-        getCurrentInputConnection().setComposingText(mComposing, 1);
+        getCurrentInputConnection().setComposingText(mComposing.toString(), 1);
+    }
+    private void appendComposing(String s) {
+        mComposing.add(s);
+        updateCandidates();
+        getCurrentInputConnection().setComposingText(mComposing.toString(), 1);
     }
     private void deleteComposing() {
         final int length = mComposing.length();
-        mComposing.delete(length - 1, length);
+        mComposing.delete();
         updateCandidates();
-        getCurrentInputConnection().setComposingText(mComposing, 1);
+        getCurrentInputConnection().setComposingText(mComposing.toString(), 1);
     }
     private void clearComposing() {
-        mComposing.setLength(0);
+        mComposing.reset(); 
         updateCandidates();
         getCurrentInputConnection().commitText("", 0);
     }
