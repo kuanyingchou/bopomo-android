@@ -114,8 +114,8 @@ public class WenWordTable {
                                 final List<WenWord> list = possibleWords.get(pk);
                                 list.add(new WenWord(kv[1], 
                                         getFrequency(kv[1])));
-                                Collections.sort(list, 
-                                        WenWord.getFrequencyComparator());
+                                //Collections.sort(list, 
+                                //        WenWord.frequencyComparator);
                             } else {
                                 final List<WenWord> a = new ArrayList<WenWord>();
                                 a.add(new WenWord(kv[1], 
@@ -155,12 +155,17 @@ public class WenWordTable {
         if(key == null) return new ArrayList<WenWord>();
         if(possibleWords.containsKey(key)) {
             final List<WenWord> res = possibleWords.get(key);
-            if(limit > res.size()) return res;
-            else return res.subList(0, limit);
+            if(limit > res.size()) return sort(res);
+            else return sort(res.subList(0, limit));
         } else {
             return new ArrayList<WenWord>();
             //throw new RuntimeException("key not found:  "+ key);
         }
+    }
+    
+    private List<WenWord> sort(List<WenWord> list) {
+        Collections.sort(list, WenWord.frequencyComparator);
+        return list;
     }
 
     public String getKeyName(String key) {

@@ -5,6 +5,8 @@ import java.util.Comparator;
 public class WenWord {
     private final char value;
     private final long freq;
+    public static final Comparator<WenWord> frequencyComparator =
+            getFrequencyComparator();
 
     WenWord(char c) {
         value = c;
