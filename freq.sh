@@ -1,23 +1,21 @@
 #!/bin/bash
 
-start_reading=false
+input=phone.cin.chars.cconv.uniq
+output=freq.out
 
-while read line; do
-  # echo this is $line
-  if [ "$line" = "%chardef  begin" ]; then
-    start_reading=true
-  elif [ "$line" = "%chardef  end" ]; then
-    start_reading=false
-  else 
-    if $start_reading; then
-      word=`echo $line | cut -d' ' -f2`
-      # echo "word = $word"
-      count=`wget --user-agent Mozilla --output-document=- www.google.com/search?q=$word 2> /dev/null | sed -e 's/.*About \([0-9,]\+\) results/\1\n/g' | head -1 | sed -e 's/,//g'`
-      echo "$word $count" | tee -a output 
-    fi
-  fi
+if [ -f $output ]; then
+  rm $output
+fi
+
+function get_count() {
+  term=$1
+  count=`curl -A "Mozilla/4.0" 2> /dev/null "http://www.google.com/search?q=%22$term%22" | grep -o 'About [0-9,]* results' | cut -d' ' -f2 | tr -d ','`
+  echo $count
+}
+
+while read word; do
+  count=`get_count $word`
+  echo $word $count | tee -a $output
   sleep 1
-done < assets/phone.cin
-
-
+done < $input
 
