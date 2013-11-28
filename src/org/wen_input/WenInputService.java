@@ -392,7 +392,12 @@ System.out.println("onKey: "+primaryCode);
         if (isSpace(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
-                commitTyped(getCurrentInputConnection());
+                //commitTyped(getCurrentInputConnection());
+                if(mCandidateView.hasCandidates()) {
+                    sendString(mCandidateView.getFirstCandidate().toString());    
+                } else {
+                    sendString(mComposing.toString());
+                }
             } else {
                 sendKey(primaryCode);
             }

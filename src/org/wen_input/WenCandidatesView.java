@@ -69,6 +69,9 @@ public class WenCandidatesView extends LinearLayout {
         scroller.fullScroll(FOCUS_LEFT);
     }
 
+    public boolean hasCandidates() {
+        return ! list.isEmpty();
+    }
     public Object getFirstCandidate() {
         if(list.size() > 0) { return list.get(0); }
         else { return null; }
