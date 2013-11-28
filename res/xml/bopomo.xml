@@ -47,7 +47,7 @@
         <Key android:codes="114" android:keyLabel="ㄐ"/>
         <Key android:codes="116" android:keyLabel="ㄔ"/>
         <Key android:codes="121" android:keyLabel="ㄗ"/>
-        <Key android:codes="117" android:keyLabel="一"/>
+        <Key android:codes="117" android:keyLabel="ㄧ"/>
         <Key android:codes="105" android:keyLabel="ㄛ"/>
         <Key android:codes="111" android:keyLabel="ㄟ"/>
         <Key android:codes="112" android:keyLabel="ㄣ" android:keyEdgeFlags="right"/>
