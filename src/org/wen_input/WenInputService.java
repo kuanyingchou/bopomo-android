@@ -79,7 +79,8 @@ public class WenInputService extends InputMethodService
     private void loadTables() {
         final AssetManager am = getAssets();
         try {
-            wordTable = new WenWordTable(am.open("phone.cin"));
+            wordTable = new WenWordTable(am.open("phone.cin"), 
+                    am.open("phone.cin.freq"));
             phraseTable = new WenPhraseTable(am.open("tsi.src.sorted"));
         } catch (IOException e) {
             e.printStackTrace();

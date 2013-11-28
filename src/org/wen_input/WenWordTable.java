@@ -19,7 +19,11 @@ public class WenWordTable {
     }
     
     public WenWordTable(InputStream is) {
-        parse(is, null);
+        this(is, null);
+    }
+    
+    public WenWordTable(InputStream is, InputStream freq) {
+        parse(is, freq);
     }
 
     private void parse(InputStream table, InputStream freq) {
