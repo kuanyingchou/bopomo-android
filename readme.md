@@ -26,14 +26,14 @@
   replace <term> with the actual word/term 
 
 ## Todo
-- phrase suggestions
-- better word suggestions when given incomplete keys
-- word/phrase frequency from Google
-- key component replacement:  我(ji3) + (p4) -> 問(jp4)
-- enter Simplified Chinese 
 - enter English 
+- enter Simplified Chinese 
 - English word/phrase suggestions
 - type multiple words at once
  
 ## Done
+- word frequency from Google(without double quotes)
+- better word suggestions when given incomplete keys
+- phrase suggestions
+- key component replacement:  我(ji3) + (p4) -> 問(jp4)
 - find a better project name
