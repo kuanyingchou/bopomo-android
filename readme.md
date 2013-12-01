@@ -27,9 +27,13 @@
 
 ## Todo
 - enter English 
+- enter full/half symbols
 - enter Simplified Chinese 
+- enhance suggestions
 - English word/phrase suggestions
 - type multiple words at once
+- smart suggestion(not only based on the last character, 
+  but also remember previous characters)
  
 ## Done
 - word frequency from Google(without double quotes)
