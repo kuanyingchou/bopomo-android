@@ -57,18 +57,18 @@ public class WenInputService extends InputMethodService
     
     private WenKeyboard mCurKeyboard;
     
-    private WenWordTable wordTable;
+    private WenWordTable bopomoTable;
     private WenPhraseTable phraseTable; 
     
     @Override public void onCreate() {
         super.onCreate();
-        loadTables();
+        loadBopomoTable();
     }
 
-    private void loadTables() {
+    private void loadBopomoTable() {
         final AssetManager am = getAssets();
         try {
-            wordTable = new WenWordTable(
+            bopomoTable = new WenWordTable(
                     am.open("phone.cin"), 
                     am.open("freq-2013-11-26-sorted"));
             phraseTable = new WenPhraseTable(am.open("tsi.src.sorted"));
@@ -96,14 +96,14 @@ public class WenInputService extends InputMethodService
         mInputView = (KeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null); //>>>
         mInputView.setOnKeyboardActionListener(this);
-        mInputView.setKeyboard(mBopomoKeyboard);
+        mInputView.setKeyboard(mBopomoKeyboard); //>>> change to default keyboard
         return mInputView;
     }
 
     @Override public View onCreateCandidatesView() {
         mCandidateView = new WenCandidatesView(this);
-        mCandidateView.setService(this);
-        return mCandidateView; }
+        return mCandidateView; 
+    }
 
     /**
      * This is the main point where we do our initialization of the input method
@@ -246,7 +246,7 @@ public class WenInputService extends InputMethodService
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
             
-            final List<WenWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
+            final List<WenWord> candidates = bopomoTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
             mComposing.reset();
@@ -425,9 +425,9 @@ System.out.println("onText: "+text);
      */
     private boolean canCompose(String s) {
         String test = compose(mComposing.toString(), s); 
-        final List<WenWord> words = wordTable.get(test);
+        final List<WenWord> words = bopomoTable.get(test);
         if(words.size() <= 1) {
-            words.addAll(wordTable.getPossible(test, 20));
+            words.addAll(bopomoTable.getPossible(test, 20));
         }
         return words.size() > 0;
     }
@@ -495,6 +495,7 @@ System.out.println("onText: "+text);
         }
         
     }
+
     private String compose(String origin, String addon) {
         final char a = addon.charAt(0);
         mComposing = new Composing();
@@ -503,12 +504,13 @@ System.out.println("onText: "+text);
         return mComposing.toString();
         
     }
+
     private void updateCandidates() {
         //if (!mCompletionOn) {
             if (mComposing.length() > 0) {
-                final List<WenWord> words = wordTable.get(mComposing.toString());
+                final List<WenWord> words = bopomoTable.get(mComposing.toString());
                 if(words.size() <= 1) {
-                    words.addAll(wordTable.getPossible(mComposing.toString(), 100));
+                    words.addAll(bopomoTable.getPossible(mComposing.toString(), 100));
                 }
                 //>>>
                 final List<String> list = new ArrayList<String>();
@@ -579,7 +581,7 @@ System.out.println("candidates for "+mComposing+": "+WenUtil.join(list, ", "));
 System.out.println("space pressed");
             confirmComposing();
         } else {        
-            final String bopomoKey = wordTable.getKeyName(
+            final String bopomoKey = bopomoTable.getKeyName(
                     String.valueOf((char)primaryCode));
 System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
 

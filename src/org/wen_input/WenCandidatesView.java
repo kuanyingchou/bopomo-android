@@ -29,7 +29,7 @@ public class WenCandidatesView extends LinearLayout {
     final private HorizontalScrollView scroller;
     final private int elmtSize = 24;
     
-    public WenCandidatesView(final Context context) {
+    public WenCandidatesView(WenInputService context) {
         super(context);
         
         setBackgroundColor(Color.WHITE);
@@ -53,10 +53,12 @@ public class WenCandidatesView extends LinearLayout {
         addView(prev);
         addView(scroller);
         addView(next);
+
+        setService(context);
       
     }
     
-    public void setService(WenInputService service) {
+    private void setService(WenInputService service) {
         inputService = service;
     }
     
