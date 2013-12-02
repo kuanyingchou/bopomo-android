@@ -57,15 +57,11 @@ public class WenInputService extends InputMethodService
     
     private WenKeyboard mCurKeyboard;
     
-    private String mWordSeparators;
-    
     private WenWordTable wordTable;
     private WenPhraseTable phraseTable; 
     
     @Override public void onCreate() {
         super.onCreate();
-        mWordSeparators = getResources().getString(R.string.word_separators);
-
         loadTables();
     }
 
@@ -608,24 +604,16 @@ System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
             mLastShiftTime = now;
         }
     }
-    
-    private String getWordSeparators() {
-        return mWordSeparators;
-    }
 
     private boolean isSpace(int keyCode) {
         return (char)keyCode == ' ';
     }
     
-    public static boolean isWordSeparator(int code) {
-        String separators = " "; //getWordSeparators();
-        return separators.contains(String.valueOf((char)code));
-    }
-
     @Override public void onWindowHidden() {
         setCandidatesViewShown(false);
         Log.d("ken", "onWindowHidden");
     }
+
     private void setComposing(String s) {
         mComposing.set(s);
         updateCandidates();
