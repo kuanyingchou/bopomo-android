@@ -41,19 +41,14 @@ import java.util.List;
 public class WenInputService extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
     
-    private InputMethodManager mInputMethodManager;
-
     private KeyboardView mInputView;
     private WenCandidatesView mCandidateView;
-    private CompletionInfo[] mCompletions;
     
     private Composing mComposing = new Composing();
-    private boolean mPredictionOn;
     private boolean mCompletionOn;
     private int mLastDisplayWidth;
     private boolean mCapsLock;
     private long mLastShiftTime;
-    private long mMetaState;
     
     private WenKeyboard mSymbolsKeyboard;
     private WenKeyboard mSymbolsShiftedKeyboard;
@@ -69,8 +64,6 @@ public class WenInputService extends InputMethodService
     
     @Override public void onCreate() {
         super.onCreate();
-        mInputMethodManager = 
-                (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
         loadTables();
@@ -139,14 +132,7 @@ public class WenInputService extends InputMethodService
         mComposing.reset();
         updateCandidates();
         
-        if (!restarting) {
-            // Clear shift states.
-            mMetaState = 0;
-        }
-        
-        mPredictionOn = false;
         mCompletionOn = false;
-        mCompletions = null;
     }
 
     private void chooseKeyboard(EditorInfo attribute) {
@@ -160,32 +146,11 @@ public class WenInputService extends InputMethodService
                 break;
             case InputType.TYPE_CLASS_TEXT:
                 mCurKeyboard = mBopomoKeyboard; //mQwertyKeyboard;
-                mPredictionOn = true;
-                int variation = attribute.inputType & InputType.TYPE_MASK_VARIATION;
-                if (variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-                        variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
-                    mPredictionOn = false; //>>> bopomo?
-                }
-                
-                if (variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-                        || variation == InputType.TYPE_TEXT_VARIATION_URI
-                        || variation == InputType.TYPE_TEXT_VARIATION_FILTER) {
-                    mPredictionOn = false; //>>> bopomo?
-                }
                 
                 if ((attribute.inputType & InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE) != 0) {
-                    // If this is an auto-complete text view, then our predictions
-                    // will not be shown and instead we will allow the editor
-                    // to supply their own.  We only show the editor's
-                    // candidates when in fullscreen mode, otherwise relying
-                    // own it displaying its own UI.
-                    mPredictionOn = false;
-                    mCompletionOn = isFullscreenMode();
+                	mCompletionOn = isFullscreenMode();
                 }
                 
-                // We also want to look at the current state of the editor
-                // to decide whether our alphabetic keyboard should start out
-                // shifted.
                 updateShiftKeyState(attribute);
                 break;
                 
@@ -263,7 +228,6 @@ public class WenInputService extends InputMethodService
      */
     @Override public void onDisplayCompletions(CompletionInfo[] completions) {
         if (mCompletionOn) {
-            mCompletions = completions;
             if (completions == null) {
                 setSuggestions(null, false, false);
                 return;
@@ -310,16 +274,20 @@ public class WenInputService extends InputMethodService
         }
     }
     
-    /**
-     * Helper to determine if a given character code is alphabetic.
-     */
-    private boolean isAlphabet(int code) {
-        if (Character.isLetter(code)) {
-            return true;
-        } else {
-            return false;
-        }
+    
+    //[ physical key events 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	// TODO Auto-generated method stub
+    	return super.onKeyDown(keyCode, event);
     }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	// TODO Auto-generated method stub
+    	return super.onKeyUp(keyCode, event);
+    }
+    //]
     
     /**
      * Helper to send a key down / key up pair to the current editor.
