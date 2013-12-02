@@ -79,7 +79,8 @@ public class WenInputService extends InputMethodService
     private void loadTables() {
         final AssetManager am = getAssets();
         try {
-            wordTable = new WenWordTable(am.open("phone.cin"), 
+            wordTable = new WenWordTable(
+                    am.open("phone.cin"), 
                     am.open("freq-2013-11-26-sorted"));
             phraseTable = new WenPhraseTable(am.open("tsi.src.sorted"));
         } catch (IOException e) {
@@ -152,41 +153,24 @@ public class WenInputService extends InputMethodService
         switch (attribute.inputType & InputType.TYPE_MASK_CLASS) {
             case InputType.TYPE_CLASS_NUMBER:
             case InputType.TYPE_CLASS_DATETIME:
-                // Numbers and dates default to the symbols keyboard, with
-                // no extra features.
                 mCurKeyboard = mSymbolsKeyboard;
                 break;
-                
             case InputType.TYPE_CLASS_PHONE:
-                // Phones will also default to the symbols keyboard, though
-                // often you will want to have a dedicated phone keyboard.
                 mCurKeyboard = mSymbolsKeyboard;
                 break;
-                
             case InputType.TYPE_CLASS_TEXT:
-                // This is general text editing.  We will default to the
-                // normal alphabetic keyboard, and assume that we should
-                // be doing predictive text (showing candidates as the
-                // user types).
                 mCurKeyboard = mBopomoKeyboard; //mQwertyKeyboard;
                 mPredictionOn = true;
-                
-                // We now look for a few special variations of text that will
-                // modify our behavior.
                 int variation = attribute.inputType & InputType.TYPE_MASK_VARIATION;
                 if (variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
                         variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
-                    // Do not display predictions / what the user is typing
-                    // when they are entering a password.
-                    mPredictionOn = false;
+                    mPredictionOn = false; //>>> bopomo?
                 }
                 
                 if (variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                         || variation == InputType.TYPE_TEXT_VARIATION_URI
                         || variation == InputType.TYPE_TEXT_VARIATION_FILTER) {
-                    // Our predictions are not useful for e-mail addresses
-                    // or URIs.
-                    mPredictionOn = false;
+                    mPredictionOn = false; //>>> bopomo?
                 }
                 
                 if ((attribute.inputType & InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE) != 0) {
