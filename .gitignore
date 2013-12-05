@@ -23,3 +23,6 @@ local.properties
 proguard/
 
 /*.log
+
+/.settings
+*.swp

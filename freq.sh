@@ -19,7 +19,5 @@ while read word; do
     sleep 5
     count=`get_count $word`
   done
-  echo $word $count | tee -a $output
-  sleep 1
 done < $input
 

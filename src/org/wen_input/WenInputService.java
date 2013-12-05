@@ -41,19 +41,14 @@ import java.util.List;
 public class WenInputService extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
     
-    private InputMethodManager mInputMethodManager;
-
     private KeyboardView mInputView;
     private WenCandidatesView mCandidateView;
-    private CompletionInfo[] mCompletions;
     
     private Composing mComposing = new Composing();
-    private boolean mPredictionOn;
     private boolean mCompletionOn;
     private int mLastDisplayWidth;
     private boolean mCapsLock;
     private long mLastShiftTime;
-    private long mMetaState;
     
     private WenKeyboard mSymbolsKeyboard;
     private WenKeyboard mSymbolsShiftedKeyboard;
@@ -62,24 +57,20 @@ public class WenInputService extends InputMethodService
     
     private WenKeyboard mCurKeyboard;
     
-    private String mWordSeparators;
-    
-    private WenWordTable wordTable;
+    private WenWordTable bopomoTable;
     private WenPhraseTable phraseTable; 
     
     @Override public void onCreate() {
         super.onCreate();
-        mInputMethodManager = 
-                (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        mWordSeparators = getResources().getString(R.string.word_separators);
-
-        loadTables();
+        loadBopomoTable();
     }
 
-    private void loadTables() {
+    private void loadBopomoTable() {
         final AssetManager am = getAssets();
         try {
-            wordTable = new WenWordTable(am.open("phone.cin"));
+            bopomoTable = new WenWordTable(
+                    am.open("phone.cin"), 
+                    am.open("freq-2013-11-26-sorted"));
             phraseTable = new WenPhraseTable(am.open("tsi.src.sorted"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,14 +96,14 @@ public class WenInputService extends InputMethodService
         mInputView = (KeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null); //>>>
         mInputView.setOnKeyboardActionListener(this);
-        mInputView.setKeyboard(mBopomoKeyboard);
+        mInputView.setKeyboard(mBopomoKeyboard); //>>> change to default keyboard
         return mInputView;
     }
 
     @Override public View onCreateCandidatesView() {
         mCandidateView = new WenCandidatesView(this);
-        mCandidateView.setService(this);
-        return mCandidateView; }
+        return mCandidateView; 
+    }
 
     /**
      * This is the main point where we do our initialization of the input method
@@ -137,70 +128,25 @@ public class WenInputService extends InputMethodService
         mComposing.reset();
         updateCandidates();
         
-        if (!restarting) {
-            // Clear shift states.
-            mMetaState = 0;
-        }
-        
-        mPredictionOn = false;
         mCompletionOn = false;
-        mCompletions = null;
     }
 
     private void chooseKeyboard(EditorInfo attribute) {
         switch (attribute.inputType & InputType.TYPE_MASK_CLASS) {
             case InputType.TYPE_CLASS_NUMBER:
             case InputType.TYPE_CLASS_DATETIME:
-                // Numbers and dates default to the symbols keyboard, with
-                // no extra features.
                 mCurKeyboard = mSymbolsKeyboard;
                 break;
-                
             case InputType.TYPE_CLASS_PHONE:
-                // Phones will also default to the symbols keyboard, though
-                // often you will want to have a dedicated phone keyboard.
                 mCurKeyboard = mSymbolsKeyboard;
                 break;
-                
             case InputType.TYPE_CLASS_TEXT:
-                // This is general text editing.  We will default to the
-                // normal alphabetic keyboard, and assume that we should
-                // be doing predictive text (showing candidates as the
-                // user types).
                 mCurKeyboard = mBopomoKeyboard; //mQwertyKeyboard;
-                mPredictionOn = true;
-                
-                // We now look for a few special variations of text that will
-                // modify our behavior.
-                int variation = attribute.inputType & InputType.TYPE_MASK_VARIATION;
-                if (variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-                        variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
-                    // Do not display predictions / what the user is typing
-                    // when they are entering a password.
-                    mPredictionOn = false;
-                }
-                
-                if (variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-                        || variation == InputType.TYPE_TEXT_VARIATION_URI
-                        || variation == InputType.TYPE_TEXT_VARIATION_FILTER) {
-                    // Our predictions are not useful for e-mail addresses
-                    // or URIs.
-                    mPredictionOn = false;
-                }
                 
                 if ((attribute.inputType & InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE) != 0) {
-                    // If this is an auto-complete text view, then our predictions
-                    // will not be shown and instead we will allow the editor
-                    // to supply their own.  We only show the editor's
-                    // candidates when in fullscreen mode, otherwise relying
-                    // own it displaying its own UI.
-                    mPredictionOn = false;
-                    mCompletionOn = isFullscreenMode();
+                	mCompletionOn = isFullscreenMode();
                 }
                 
-                // We also want to look at the current state of the editor
-                // to decide whether our alphabetic keyboard should start out
-                // shifted.
                 updateShiftKeyState(attribute);
                 break;
                 
@@ -278,7 +224,6 @@ public class WenInputService extends InputMethodService
      */
     @Override public void onDisplayCompletions(CompletionInfo[] completions) {
         if (mCompletionOn) {
-            mCompletions = completions;
             if (completions == null) {
                 setSuggestions(null, false, false);
                 return;
@@ -301,7 +246,7 @@ public class WenInputService extends InputMethodService
     private void commitTyped(InputConnection inputConnection) {
         if (mComposing.length() > 0) {
             
-            final List<WenWord> candidates = wordTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
+            final List<WenWord> candidates = bopomoTable.get(mComposing.toString()); //>>> strange, should get the first char from candidatesView
             if(candidates.size() <= 0) return;
             inputConnection.commitText(candidates.get(0).toString(), candidates.get(0).toString().length());
             mComposing.reset();
@@ -325,16 +270,20 @@ public class WenInputService extends InputMethodService
         }
     }
     
-    /**
-     * Helper to determine if a given character code is alphabetic.
-     */
-    private boolean isAlphabet(int code) {
-        if (Character.isLetter(code)) {
-            return true;
-        } else {
-            return false;
-        }
+    
+    //[ physical key events 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	// TODO Auto-generated method stub
+    	return super.onKeyDown(keyCode, event);
     }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	// TODO Auto-generated method stub
+    	return super.onKeyUp(keyCode, event);
+    }
+    //]
     
     /**
      * Helper to send a key down / key up pair to the current editor.
@@ -391,7 +340,12 @@ System.out.println("onKey: "+primaryCode);
         if (isSpace(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
-                commitTyped(getCurrentInputConnection());
+                //commitTyped(getCurrentInputConnection());
+                if(mCandidateView.hasCandidates()) {
+                    sendString(mCandidateView.getFirstCandidate().toString());    
+                } else {
+                    sendString(mComposing.toString());
+                }
             } else {
                 sendKey(primaryCode);
             }
@@ -471,9 +425,9 @@ System.out.println("onText: "+text);
      */
     private boolean canCompose(String s) {
         String test = compose(mComposing.toString(), s); 
-        final List<WenWord> words = wordTable.get(test);
+        final List<WenWord> words = bopomoTable.get(test);
         if(words.size() <= 1) {
-            words.addAll(wordTable.getPossible(test, 20));
+            words.addAll(bopomoTable.getPossible(test, 20));
         }
         return words.size() > 0;
     }
@@ -541,6 +495,7 @@ System.out.println("onText: "+text);
         }
         
     }
+
     private String compose(String origin, String addon) {
         final char a = addon.charAt(0);
         mComposing = new Composing();
@@ -549,12 +504,13 @@ System.out.println("onText: "+text);
         return mComposing.toString();
         
     }
+
     private void updateCandidates() {
         //if (!mCompletionOn) {
             if (mComposing.length() > 0) {
-                final List<WenWord> words = wordTable.get(mComposing.toString());
+                final List<WenWord> words = bopomoTable.get(mComposing.toString());
                 if(words.size() <= 1) {
-                    words.addAll(wordTable.getPossible(mComposing.toString(), 100));
+                    words.addAll(bopomoTable.getPossible(mComposing.toString(), 100));
                 }
                 //>>>
                 final List<String> list = new ArrayList<String>();
@@ -625,7 +581,7 @@ System.out.println("candidates for "+mComposing+": "+WenUtil.join(list, ", "));
 System.out.println("space pressed");
             confirmComposing();
         } else {        
-            final String bopomoKey = wordTable.getKeyName(
+            final String bopomoKey = bopomoTable.getKeyName(
                     String.valueOf((char)primaryCode));
 System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
 
@@ -650,24 +606,16 @@ System.out.println("current key: " + bopomoKey + "("+primaryCode+")");
             mLastShiftTime = now;
         }
     }
-    
-    private String getWordSeparators() {
-        return mWordSeparators;
-    }
 
     private boolean isSpace(int keyCode) {
         return (char)keyCode == ' ';
     }
     
-    public static boolean isWordSeparator(int code) {
-        String separators = " "; //getWordSeparators();
-        return separators.contains(String.valueOf((char)code));
-    }
-
     @Override public void onWindowHidden() {
         setCandidatesViewShown(false);
         Log.d("ken", "onWindowHidden");
     }
+
     private void setComposing(String s) {
         mComposing.set(s);
         updateCandidates();
