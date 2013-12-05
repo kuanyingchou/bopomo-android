@@ -1,4 +1,5 @@
-# wen-input - a simple bopomo input service for Android platform.  
+# wen-input
+## a simple bopomo input service for Android platform.  
 
 ## Todo
 - English input
@@ -15,7 +16,9 @@
 - better word suggestions when given incomplete keys
 - phrase suggestions using tsi.src from libchewing
 - key component replacement:  
+    ```
     ji3(我) + p -> jp3(穩) 
     jp3(穩) + 4 -> jp4(問)
+    ```
 - find a better project name
 
