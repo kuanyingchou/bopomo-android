@@ -5,10 +5,13 @@
 **Features**
 - word frequency from Google Search result counts
 - word suggestions when given incomplete keys
+
     ㄓ -> 之、知、隻…
     ㄕ -> 失、袘、師…
+
 - phrase suggestions using tsi.src from libchewing
 - key component replacement:  
+    
     ㄨㄛˇ(我) + ㄣ -> ㄨㄣˇ(穩) 
     ㄨㄣˇ(穩) + ㄗ -> ㄗㄣˇ(怎)
     ㄨㄣˇ(穩) + ˋ -> ㄨㄣˋ(問)
