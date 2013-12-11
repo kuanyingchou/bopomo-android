@@ -131,7 +131,7 @@ public class WenInputService extends InputMethodService
                 mCurKeyboard = mBopomoKeyboard; //mQwertyKeyboard;
                 
                 if ((attribute.inputType & InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE) != 0) {
-                	mCompletionOn = isFullscreenMode();
+                    mCompletionOn = isFullscreenMode();
                 }
                 
                 updateShiftKeyState(attribute);
@@ -261,14 +261,14 @@ public class WenInputService extends InputMethodService
     //[ hard key events 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	// TODO Auto-generated method stub
-    	return super.onKeyDown(keyCode, event);
+        super.onKeyDown(keyCode, event);
+        onKey(keyCode, null);
+        return true;
     }
     
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-    	// TODO Auto-generated method stub
-    	return super.onKeyUp(keyCode, event);
+        return super.onKeyUp(keyCode, event);
     }
     //]
     
