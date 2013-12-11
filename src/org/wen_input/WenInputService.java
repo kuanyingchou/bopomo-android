@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// An input service receives hard or soft keyboard 
+// events, translate the events into characters, and
+// fill in the characters to an input edit.
 
 public class WenInputService extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
@@ -255,7 +258,7 @@ public class WenInputService extends InputMethodService
     }
     
     
-    //[ physical key events 
+    //[ hard key events 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
     	// TODO Auto-generated method stub
@@ -317,10 +320,11 @@ public class WenInputService extends InputMethodService
         }
     }
 
-    //[ implements KeyboardView.OnKeyboardActionListener
+    //[ soft key events,
+    //  implements KeyboardView.OnKeyboardActionListener
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-System.out.println("onKey: "+primaryCode);
+        //System.out.println("onKey: "+primaryCode);
         if (isSpace(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {

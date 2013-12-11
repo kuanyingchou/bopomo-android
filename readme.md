@@ -26,7 +26,7 @@ wen-input (文輸入法) - a simple Chinese input service for Android platform.
 - character frequencies from Google Search result counts
     
 **Wish list**
-
+- improve loading speed
 - English input
 - full/half symbol keyboard
 - Simplified Chinese input
