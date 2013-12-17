@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Google <term> and get frequency from "About ###,### results"
+# Google "<term>" and get frequency from "About ###,### results"
 
 # How to convert from Simplified Chinese to Traditional Chinese?
 #   Use cconv:
@@ -8,6 +8,8 @@
 
 input=phone.cin.chars.cconv.uniq
 output=freq.out
+cooldown=30
+interval=3
 
 if [ -f $output ]; then
   rm $output
@@ -29,8 +31,10 @@ function get_count() {
 while read word; do
   count=`get_count $word`
   while [ -z $count ]; do
-    sleep 5
+    sleep $cooldown
     count=`get_count $word`
   done
+  echo $word $count | tee -a $output
+  sleep $interval
 done < $input
 
