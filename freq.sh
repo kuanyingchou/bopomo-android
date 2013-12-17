@@ -28,9 +28,21 @@ function get_count() {
   echo $count
 }
 
+function wait() {
+  sec=$1
+  while (( $sec > 0 )) ; do
+    let sec=sec-1
+    printf "\r$sec second(s) remaining..."
+    sleep 1
+  done
+  echo ""
+}
+
 while read word; do
+  echo "looking for '$word'..."
   count=`get_count $word`
   while [ -z $count ]; do
+    echo "failed"
     sleep $cooldown
     count=`get_count $word`
   done
