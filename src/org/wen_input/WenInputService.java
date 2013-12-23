@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // An input service receives hard or soft keyboard 
-// events, translate the events into characters, and
-// fill in the characters to an input edit.
+// events, translates the events into characters, and
+// fills in the characters to an input edit.
 
 public class WenInputService extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
@@ -91,6 +91,7 @@ public class WenInputService extends InputMethodService
         mCandidateView = new WenCandidatesView(this);
         return mCandidateView; 
     }
+    
 
     /**
      * This is the main point where we do our initialization of the input method
