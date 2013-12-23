@@ -106,6 +106,7 @@ public class WenWordTable {
                         words.put(kv[0], a);
                     }
 
+/*
                     //[ possible words
                     if(kv[0].length() > 1) {
                         for(int i=1; i<kv[0].length(); i++) {
@@ -125,6 +126,7 @@ public class WenWordTable {
                         }
                     }
                     //System.out.println("add "+kv[1] + " to " +kv[0]);                    
+*/
                     break;
                 }
                 line = reader.readLine();
